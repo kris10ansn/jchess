@@ -60,6 +60,69 @@ public class Board {
     }
 
     /**
+     * Convert board to FEN notation
+     * https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
+     *
+     * @return FEN string
+     */
+    public String toFen() {
+        String fen = "";
+        int empties = 0;
+
+        // Piece placement data
+        for (int i = 0; i < board.length; i++) {
+            final boolean isRankEnd = i % 8 == 0;
+            final int piece = board[i];
+
+            if (empties > 0 && (piece != Piece.NONE || isRankEnd)) {
+                fen += empties;
+                empties = 0;
+            }
+
+            if (i > 0 && isRankEnd) {
+                fen += '/';
+            }
+
+            if (board[i] == Piece.NONE) {
+                empties++;
+            } else {
+                fen += Piece.toFenChar(board[i]);
+            }
+        }
+
+        // Active color data
+        fen += " ";
+        fen += activeColor == Piece.WHITE ? "w" : "b";
+
+        // Castling rights data
+        fen += " ";
+
+        if (castlingRights.hasCastlingRight(Piece.WHITE, true)) {
+            fen += 'K';
+        }
+        if (castlingRights.hasCastlingRight(Piece.WHITE, false)) {
+            fen += 'Q';
+        }
+        if (castlingRights.hasCastlingRight(Piece.BLACK, true)) {
+            fen += 'k';
+        }
+        if (castlingRights.hasCastlingRight(Piece.BLACK, false)) {
+            fen += 'q';
+        }
+
+        // En passant square data
+        fen += " " + (enPassantSquare != null ? enPassantSquare : "-");
+
+        // Halfmove data
+        fen += " " + fiftyMoveCounter;
+
+        // Fullmove data
+        fen += " " + moveCounter;
+
+        return fen;
+    }
+
+    /**
      * Prints the current state of the chess board and game information to the
      * standard output.
      */
@@ -90,6 +153,10 @@ public class Board {
             System.out.print(board[i]);
             System.out.print('\t');
         }
+
+        System.out.println();
+
+        System.out.println("FEN: " + toFen());
     }
 
 }

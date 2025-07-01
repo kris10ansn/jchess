@@ -42,4 +42,25 @@ public class Piece {
 
         return piece | (isWhite ? Piece.WHITE : Piece.BLACK);
     }
+
+    public static char toFenChar(int piece) {
+        char c = switch (piece & 0b00111) {
+            case Piece.KING ->
+                'k';
+            case Piece.PAWN ->
+                'p';
+            case Piece.KNIGHT ->
+                'n';
+            case Piece.BISHOP ->
+                'b';
+            case Piece.ROOK ->
+                'r';
+            case Piece.QUEEN ->
+                'q';
+            default ->
+                throw new IllegalArgumentException("Invalid piece " + piece);
+        };
+
+        return Piece.isColor(piece, Piece.WHITE) ? Character.toUpperCase(c) : c;
+    }
 }
