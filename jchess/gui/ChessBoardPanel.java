@@ -3,6 +3,7 @@ package jchess.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -27,22 +28,45 @@ public class ChessBoardPanel extends JPanel {
 
     private int selectedSquare = -1;
 
+    private int dragPiece = Piece.NONE;
+    private Point dragPosition = new Point(0, 0);
+
     private final Board board;
 
     public ChessBoardPanel(Board board) {
         this.board = board;
         loadPieceImages();
 
-        addMouseListener(new MouseAdapter() {
+        MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent event) {
                 int rank = event.getY() / SQUARE_SIZE;
                 int file = event.getX() / SQUARE_SIZE;
 
                 selectedSquare = rank * 8 + file;
+
+                dragPosition.setLocation(event.getX(), event.getY());
+                dragPiece = board.getBoard()[selectedSquare];
+
                 repaint();
             }
-        });
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                dragPiece = Piece.NONE;
+                // TODO: MAKE MOVE
+                repaint();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent event) {
+                dragPosition.setLocation(event.getX(), event.getY());
+                repaint();
+            }
+        };
+
+        addMouseListener(mouseAdapter);
+        addMouseMotionListener(mouseAdapter);
     }
 
     @Override
@@ -79,6 +103,11 @@ public class ChessBoardPanel extends JPanel {
                 final BufferedImage pieceImage = pieceImageMap.get(piece);
                 g.drawImage(pieceImage, squareX, squareY, SQUARE_SIZE, SQUARE_SIZE, this);
             }
+        }
+
+        if (dragPiece != Piece.NONE) {
+            final BufferedImage pieceImage = pieceImageMap.get(dragPiece);
+            g.drawImage(pieceImage, dragPosition.x - SQUARE_SIZE / 2, dragPosition.y - SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE, this);
         }
     }
 
