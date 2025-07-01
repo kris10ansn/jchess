@@ -42,6 +42,7 @@ public class JChess {
                 (int) (bounds.height / 2 - frameSize.height / 2)
         );
 
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 }
