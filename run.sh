@@ -1,0 +1,1 @@
+javac JChess.java -d out && java -cp out JChess
