@@ -93,21 +93,49 @@ public class ChessBoardPanel extends JPanel {
 
         final int[] boardArray = board.getBoard();
 
+        final int fontSize = 24;
+        g.setFont(g.getFont().deriveFont((float) fontSize));
+
         int rank = 0;
         for (int i = 0; i < boardArray.length; i++) {
             if (i > 0 && i % 8 == 0) {
                 rank++;
             }
 
-            final int squareX = i % 8 * SQUARE_SIZE;
+            final int file = i % 8;
+
+            final int squareX = file * SQUARE_SIZE;
             final int squareY = rank * SQUARE_SIZE;
 
-            g.setColor((i + rank) % 2 == 0 ? COLOR_LIGHT : COLOR_DARK);
+            final boolean isLightSquare = (i + rank) % 2 == 0;
+
+            g.setColor(isLightSquare ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
 
             if (i == selectedSquare) {
                 g.setColor(COLOR_HIGHLIGHT);
                 g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
+            }
+
+            // Draw file characters on the lowest rank
+            if (rank == 7) {
+                // Get character by adding the file index to 'a' (0='a', 1='b', ...)
+                final char fileCharacter = (char) ('a' + file);
+                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+                g.drawString(
+                        String.valueOf(fileCharacter),
+                        squareX + fontSize / 8,
+                        squareY + SQUARE_SIZE - fontSize / 8
+                );
+            }
+
+            if (file == 7) {
+                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+                g.drawString(
+                        String.valueOf(8 - rank),
+                        squareX + SQUARE_SIZE - fontSize / 2 - fontSize / 8,
+                        squareY + fontSize + fontSize / 8
+                );
             }
 
             final int piece = boardArray[i];
@@ -122,6 +150,7 @@ public class ChessBoardPanel extends JPanel {
             final BufferedImage pieceImage = pieceImageMap.get(dragPiece);
             g.drawImage(pieceImage, dragPosition.x - SQUARE_SIZE / 2, dragPosition.y - SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE, this);
         }
+
     }
 
     private void loadPieceImages() {
