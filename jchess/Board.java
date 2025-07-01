@@ -1,0 +1,95 @@
+package jchess;
+
+public class Board {
+
+    private final CastlingRights castlingRights = new CastlingRights();
+    private final int[] board = new int[64];
+
+    private int activeColor = Piece.WHITE;
+    private int moveCounter = 1;
+    private int fiftyMoveCounter = 0;
+    private String enPassantSquare = null;
+
+    /**
+     * Loads board position from FEN notation:
+     * https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
+     *
+     * @param fen String containing FEN notation
+     */
+    public void loadFen(String fen) {
+        String[] segments = fen.split(" ");
+
+        if (segments.length != 6) {
+            throw new IllegalArgumentException("Invalid fen string: " + fen);
+        }
+
+        // Piece placement data
+        int pos = 0;
+
+        for (char c : segments[0].toCharArray()) {
+            if (c == '/') {
+                continue;
+            }
+
+            if (Character.isDigit(c)) {
+                pos += Character.getNumericValue(c);
+                continue;
+            }
+
+            board[pos] = Piece.fromFenChar(c);
+            pos++;
+        }
+
+        // Active color data
+        activeColor = segments[1].equals("w") ? Piece.WHITE : Piece.BLACK;
+
+        // Castling rights data
+        castlingRights.setCastlingRight(Piece.WHITE, true, segments[2].contains("K"));
+        castlingRights.setCastlingRight(Piece.BLACK, true, segments[2].contains("k"));
+        castlingRights.setCastlingRight(Piece.WHITE, false, segments[2].contains("Q"));
+        castlingRights.setCastlingRight(Piece.BLACK, false, segments[2].contains("q"));
+
+        // En passant square data (TODO: Implement)
+        enPassantSquare = segments[3].equals("-") ? null : segments[3];
+
+        // Halfmove data
+        fiftyMoveCounter = Integer.parseInt(segments[4]);
+
+        // Fullmove data
+        moveCounter = Integer.parseInt(segments[5]);
+    }
+
+    /**
+     * Prints the current state of the chess board and game information to the
+     * standard output.
+     */
+    public void debugPrint() {
+        System.out.println((activeColor == Piece.WHITE ? "White" : "Black") + " to move");
+        System.out.println("Move counter: " + moveCounter);
+        System.out.println("Halfmove counter: " + fiftyMoveCounter);
+        System.out.println("En passant square: " + enPassantSquare);
+
+        System.out.println("White can"
+                + (castlingRights.hasCastlingRight(Piece.WHITE, true) ? "" : "'t")
+                + " castle kingside");
+        System.out.println("White can"
+                + (castlingRights.hasCastlingRight(Piece.WHITE, false) ? "" : "'t")
+                + " castle queenside");
+        System.out.println("Black can"
+                + (castlingRights.hasCastlingRight(Piece.BLACK, true) ? "" : "'t")
+                + " castle kingside");
+        System.out.println("Black can"
+                + (castlingRights.hasCastlingRight(Piece.BLACK, false) ? "" : "'t")
+                + " castle queenside");
+
+        for (int i = 0; i < board.length; i++) {
+            if (i > 0 && i % 8 == 0) {
+                System.out.println();
+            }
+
+            System.out.print(board[i]);
+            System.out.print('\t');
+        }
+    }
+
+}
