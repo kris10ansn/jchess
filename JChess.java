@@ -4,6 +4,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -12,12 +17,33 @@ import jchess.Piece;
 
 class ChessBoardPanel extends JPanel {
 
-    private final Color COLOR_DARK = new Color(Integer.parseInt("AC825E", 16));
-    private final Color COLOR_LIGHT = new Color(Integer.parseInt("DCC7A6", 16));
+    private final HashMap<Integer, BufferedImage> pieceMap = new HashMap<>();
+
+    private final Color COLOR_DARK = new Color(0xFFAC825E);
+    private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
     private final Board board;
 
     public ChessBoardPanel(Board board) {
         this.board = board;
+
+        try {
+            pieceMap.put(Piece.WHITE | Piece.PAWN, ImageIO.read(new File("./pieces/wP.png")));
+            pieceMap.put(Piece.WHITE | Piece.KING, ImageIO.read(new File("./pieces/wK.png")));
+            pieceMap.put(Piece.WHITE | Piece.KNIGHT, ImageIO.read(new File("./pieces/wN.png")));
+            pieceMap.put(Piece.WHITE | Piece.BISHOP, ImageIO.read(new File("./pieces/wB.png")));
+            pieceMap.put(Piece.WHITE | Piece.ROOK, ImageIO.read(new File("./pieces/wR.png")));
+            pieceMap.put(Piece.WHITE | Piece.QUEEN, ImageIO.read(new File("./pieces/wQ.png")));
+
+            pieceMap.put(Piece.BLACK | Piece.PAWN, ImageIO.read(new File("./pieces/bP.png")));
+            pieceMap.put(Piece.BLACK | Piece.KING, ImageIO.read(new File("./pieces/bK.png")));
+            pieceMap.put(Piece.BLACK | Piece.KNIGHT, ImageIO.read(new File("./pieces/bN.png")));
+            pieceMap.put(Piece.BLACK | Piece.BISHOP, ImageIO.read(new File("./pieces/bB.png")));
+            pieceMap.put(Piece.BLACK | Piece.ROOK, ImageIO.read(new File("./pieces/bR.png")));
+            pieceMap.put(Piece.BLACK | Piece.QUEEN, ImageIO.read(new File("./pieces/bQ.png")));
+        } catch (IOException exception) {
+            System.out.println(exception);
+            System.exit(1);
+        }
     }
 
     @Override
@@ -28,9 +54,6 @@ class ChessBoardPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        g.setColor(COLOR_LIGHT);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
         final int[] boardArray = board.getBoard();
         final int SQUARE_SIZE = this.getWidth() / board.BOARD_SIZE;
@@ -46,14 +69,11 @@ class ChessBoardPanel extends JPanel {
 
             g.setColor((i + rank) % 2 == 0 ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
-
             final int piece = boardArray[i];
 
             if (piece != Piece.NONE) {
-                final int padding = 32;
-
-                g.setColor(Piece.isColor(piece, Piece.WHITE) ? Color.WHITE : Color.BLACK);
-                g.fillRect(squareX + padding, squareY + padding, SQUARE_SIZE - padding * 2, SQUARE_SIZE - padding * 2);
+                final BufferedImage pieceImage = pieceMap.get(piece);
+                g.drawImage(pieceImage, squareX, squareY, SQUARE_SIZE, SQUARE_SIZE, this);
             }
         }
     }
