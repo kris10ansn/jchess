@@ -3,6 +3,8 @@ package jchess.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +20,29 @@ public class ChessBoardPanel extends JPanel {
 
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
+    private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 128);
+
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
+
+    private int selectedSquare = -1;
+
     private final Board board;
 
     public ChessBoardPanel(Board board) {
         this.board = board;
         loadPieceImages();
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                int rank = event.getY() / SQUARE_SIZE;
+                int file = event.getX() / SQUARE_SIZE;
+
+                selectedSquare = rank * 8 + file;
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -49,6 +67,12 @@ public class ChessBoardPanel extends JPanel {
 
             g.setColor((i + rank) % 2 == 0 ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
+
+            if (i == selectedSquare) {
+                g.setColor(COLOR_HIGHLIGHT);
+                g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
+            }
+
             final int piece = boardArray[i];
 
             if (piece != Piece.NONE) {
