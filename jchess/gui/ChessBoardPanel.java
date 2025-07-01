@@ -44,17 +44,30 @@ public class ChessBoardPanel extends JPanel {
                 int file = event.getX() / SQUARE_SIZE;
 
                 selectedSquare = rank * 8 + file;
+                int piece = board.getSquare(selectedSquare);
 
                 dragPosition.setLocation(event.getX(), event.getY());
-                dragPiece = board.getBoard()[selectedSquare];
+                dragPiece = piece;
 
                 repaint();
             }
 
             @Override
             public void mouseReleased(MouseEvent event) {
+                if (dragPiece == Piece.NONE) {
+                    return;
+                }
+
+                int rank = event.getY() / SQUARE_SIZE;
+                int file = event.getX() / SQUARE_SIZE;
+
+                int toIndex = rank * 8 + file;
+
+                if (selectedSquare != toIndex) {
+                    board.makeMove(selectedSquare, toIndex);
+                }
+
                 dragPiece = Piece.NONE;
-                // TODO: MAKE MOVE
                 repaint();
             }
 

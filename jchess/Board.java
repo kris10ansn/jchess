@@ -10,6 +10,11 @@ public class Board {
     private int fiftyMoveCounter = 0;
     private String enPassantSquare = null;
 
+    public void makeMove(int fromIndex, int toIndex) {
+        board[toIndex] = board[fromIndex];
+        board[fromIndex] = Piece.NONE;
+    }
+
     /**
      * Loads board position from FEN notation:
      * https://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
@@ -161,5 +166,9 @@ public class Board {
 
     public int[] getBoard() {
         return board;
+    }
+
+    public int getSquare(int index) {
+        return board[index];
     }
 }
