@@ -20,7 +20,6 @@ public class Piece {
     }
 
     public static int fromFenChar(char fenChar) {
-
         int piece = switch (Character.toLowerCase(fenChar)) {
             case 'k' ->
                 Piece.KING;
