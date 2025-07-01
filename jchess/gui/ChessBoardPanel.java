@@ -14,7 +14,7 @@ import jchess.Piece;
 
 public class ChessBoardPanel extends JPanel {
 
-    private final HashMap<Integer, BufferedImage> pieceMap = new HashMap<>();
+    private final HashMap<Integer, BufferedImage> pieceImageMap = new HashMap<>();
 
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
@@ -22,25 +22,7 @@ public class ChessBoardPanel extends JPanel {
 
     public ChessBoardPanel(Board board) {
         this.board = board;
-
-        try {
-            pieceMap.put(Piece.WHITE | Piece.PAWN, ImageIO.read(new File("./pieces/wP.png")));
-            pieceMap.put(Piece.WHITE | Piece.KING, ImageIO.read(new File("./pieces/wK.png")));
-            pieceMap.put(Piece.WHITE | Piece.KNIGHT, ImageIO.read(new File("./pieces/wN.png")));
-            pieceMap.put(Piece.WHITE | Piece.BISHOP, ImageIO.read(new File("./pieces/wB.png")));
-            pieceMap.put(Piece.WHITE | Piece.ROOK, ImageIO.read(new File("./pieces/wR.png")));
-            pieceMap.put(Piece.WHITE | Piece.QUEEN, ImageIO.read(new File("./pieces/wQ.png")));
-
-            pieceMap.put(Piece.BLACK | Piece.PAWN, ImageIO.read(new File("./pieces/bP.png")));
-            pieceMap.put(Piece.BLACK | Piece.KING, ImageIO.read(new File("./pieces/bK.png")));
-            pieceMap.put(Piece.BLACK | Piece.KNIGHT, ImageIO.read(new File("./pieces/bN.png")));
-            pieceMap.put(Piece.BLACK | Piece.BISHOP, ImageIO.read(new File("./pieces/bB.png")));
-            pieceMap.put(Piece.BLACK | Piece.ROOK, ImageIO.read(new File("./pieces/bR.png")));
-            pieceMap.put(Piece.BLACK | Piece.QUEEN, ImageIO.read(new File("./pieces/bQ.png")));
-        } catch (IOException exception) {
-            System.out.println(exception);
-            System.exit(1);
-        }
+        loadPieceImages();
     }
 
     @Override
@@ -69,9 +51,30 @@ public class ChessBoardPanel extends JPanel {
             final int piece = boardArray[i];
 
             if (piece != Piece.NONE) {
-                final BufferedImage pieceImage = pieceMap.get(piece);
+                final BufferedImage pieceImage = pieceImageMap.get(piece);
                 g.drawImage(pieceImage, squareX, squareY, SQUARE_SIZE, SQUARE_SIZE, this);
             }
+        }
+    }
+
+    private void loadPieceImages() {
+        try {
+            pieceImageMap.put(Piece.WHITE | Piece.PAWN, ImageIO.read(new File("./pieces/wP.png")));
+            pieceImageMap.put(Piece.WHITE | Piece.KING, ImageIO.read(new File("./pieces/wK.png")));
+            pieceImageMap.put(Piece.WHITE | Piece.KNIGHT, ImageIO.read(new File("./pieces/wN.png")));
+            pieceImageMap.put(Piece.WHITE | Piece.BISHOP, ImageIO.read(new File("./pieces/wB.png")));
+            pieceImageMap.put(Piece.WHITE | Piece.ROOK, ImageIO.read(new File("./pieces/wR.png")));
+            pieceImageMap.put(Piece.WHITE | Piece.QUEEN, ImageIO.read(new File("./pieces/wQ.png")));
+
+            pieceImageMap.put(Piece.BLACK | Piece.PAWN, ImageIO.read(new File("./pieces/bP.png")));
+            pieceImageMap.put(Piece.BLACK | Piece.KING, ImageIO.read(new File("./pieces/bK.png")));
+            pieceImageMap.put(Piece.BLACK | Piece.KNIGHT, ImageIO.read(new File("./pieces/bN.png")));
+            pieceImageMap.put(Piece.BLACK | Piece.BISHOP, ImageIO.read(new File("./pieces/bB.png")));
+            pieceImageMap.put(Piece.BLACK | Piece.ROOK, ImageIO.read(new File("./pieces/bR.png")));
+            pieceImageMap.put(Piece.BLACK | Piece.QUEEN, ImageIO.read(new File("./pieces/bQ.png")));
+        } catch (IOException exception) {
+            System.out.println(exception);
+            System.exit(1);
         }
     }
 }
