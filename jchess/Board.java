@@ -2,10 +2,8 @@ package jchess;
 
 public class Board {
 
-    public final int BOARD_SIZE = 8;
-
     private final CastlingRights castlingRights = new CastlingRights();
-    private final int[] board = new int[BOARD_SIZE * BOARD_SIZE];
+    private final int[] board = new int[64];
 
     private int activeColor = Piece.WHITE;
     private int moveCounter = 1;

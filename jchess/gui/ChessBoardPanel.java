@@ -18,6 +18,8 @@ public class ChessBoardPanel extends JPanel {
 
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
+    private final int BOARD_SIZE = 1024;
+    private final int SQUARE_SIZE = BOARD_SIZE / 8;
     private final Board board;
 
     public ChessBoardPanel(Board board) {
@@ -27,7 +29,7 @@ public class ChessBoardPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(1024, 1024);
+        return new Dimension(BOARD_SIZE, BOARD_SIZE);
     }
 
     @Override
@@ -35,7 +37,6 @@ public class ChessBoardPanel extends JPanel {
         super.paintComponent(g);
 
         final int[] boardArray = board.getBoard();
-        final int SQUARE_SIZE = this.getWidth() / board.BOARD_SIZE;
 
         int rank = 0;
         for (int i = 0; i < boardArray.length; i++) {
