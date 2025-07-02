@@ -230,8 +230,10 @@ public class Board {
 
         if (Piece.isColor(piece, Piece.WHITE)) {
             whitePieces |= position;
+            blackPieces &= ~position;
         } else {
             blackPieces |= position;
+            whitePieces &= ~position;
         }
 
         board[pos] = piece;
