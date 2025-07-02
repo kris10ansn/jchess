@@ -2,6 +2,10 @@ package jchess;
 
 public class Bits {
 
+    public static long oneAt(int n) {
+        return 1L << n;
+    }
+
     public static boolean overlap(long l1, long l2) {
         return (l1 & l2) != 0;
     }

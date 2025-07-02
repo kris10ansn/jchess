@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import jchess.BitBoard;
 import jchess.Bits;
 import jchess.Board;
 import jchess.Move;
@@ -55,7 +54,7 @@ public class ChessBoardPanel extends JPanel {
                 final int index = rank * 8 + file;
                 final int piece = board.getSquare(index);
 
-                if (Bits.overlap(moveSquares, BitBoard.createPositionBoard(index))) {
+                if (Bits.overlap(moveSquares, Bits.oneAt(index))) {
                     board.makeMove(new Move(selectedSquare, index));
                     moveSquares = 0;
                     selectedSquare = -1;
@@ -114,7 +113,7 @@ public class ChessBoardPanel extends JPanel {
 
                 hoveringSquare
                         = Bits.overlap(
-                                BitBoard.createPositionBoard(index),
+                                Bits.oneAt(index),
                                 moveSquares
                         )
                         ? index : -1;
@@ -128,7 +127,7 @@ public class ChessBoardPanel extends JPanel {
                 int file = event.getX() / SQUARE_SIZE;
                 int index = rank * 8 + file;
 
-                if (Bits.overlap(moveSquares, BitBoard.createPositionBoard(index))) {
+                if (Bits.overlap(moveSquares, Bits.oneAt(index))) {
                     hoveringSquare = index;
                     repaint();
                 } else {

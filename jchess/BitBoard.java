@@ -25,10 +25,6 @@ public class BitBoard {
 
     public static final long KNIGHT_MOVES = 0b01010000_10001000_00000000_10001000_01010000_00000000_00000000_00000000L;
 
-    public static long createPositionBoard(int pos) {
-        return 1L << pos;
-    }
-
     public static String stringify(long l) {
         return String.format("%64s", Long.toBinaryString(l)).replace(' ', '0');
     }

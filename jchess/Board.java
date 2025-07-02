@@ -27,14 +27,14 @@ public class Board {
     public boolean isLegalMove(Move move) {
         return Bits.overlap(
                 generateMovesFor(move.fromSquare()),
-                (BitBoard.createPositionBoard(move.toSquare()))
+                (Bits.oneAt(move.toSquare()))
         );
     }
 
     public long generateMovesFor(int square) {
         final int piece = board[square];
 
-        long position = BitBoard.createPositionBoard(square);
+        long position = Bits.oneAt(square);
 
         boolean isWhite = Piece.isColor(piece, Piece.WHITE);
         int direction = isWhite ? -1 : 1;
