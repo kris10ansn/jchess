@@ -3,7 +3,7 @@ package jchess;
 public class Bits {
 
     public static boolean overlap(long l1, long l2) {
-        return (l1 & l2) > 0;
+        return (l1 & l2) != 0;
     }
 
     public static long shift(long l, int n) {
@@ -11,6 +11,6 @@ public class Bits {
     }
 
     public static boolean getBit(long l, int pos) {
-        return (l & (1L << pos)) > 0;
+        return (l & (1L << pos)) != 0;
     }
 }
