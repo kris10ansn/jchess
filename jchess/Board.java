@@ -225,20 +225,23 @@ public class Board {
         return board[index];
     }
 
-    private void setPiece(int piece, int position) {
+    private void setPiece(int piece, int pos) {
+        final long position = Bits.oneAt(pos);
+
         if (Piece.isColor(piece, Piece.WHITE)) {
-            whitePieces |= (1L << position);
+            whitePieces |= position;
         } else {
-            blackPieces |= (1L << position);
+            blackPieces |= position;
         }
 
-        board[position] = piece;
+        board[pos] = piece;
     }
 
-    private void removePiece(int position) {
-        whitePieces &= ~(1L << position);
-        blackPieces &= ~(1L << position);
+    private void removePiece(int pos) {
+        final long position = Bits.oneAt(pos);
+        whitePieces &= ~position;
+        blackPieces &= ~position;
 
-        board[position] = Piece.NONE;
+        board[pos] = Piece.NONE;
     }
 }
