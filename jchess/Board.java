@@ -38,7 +38,7 @@ public class Board {
         final int direction = isWhite ? -1 : 1;
 
         final long position = Bits.oneAt(square);
-        final long allPieces = whitePieces & blackPieces;
+        final long allPieces = whitePieces | blackPieces;
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
