@@ -14,6 +14,11 @@ public class Piece {
     public static final int BLACK = 0b10000;
 
     private static final int COLOR_MASK = 0b11000;
+    private static final int TYPE_MASK = 0b00111;
+
+    public static boolean isType(int piece, int pieceType) {
+        return (piece & TYPE_MASK) == pieceType;
+    }
 
     public static boolean isColor(int piece, int color) {
         return (piece & COLOR_MASK) == color;

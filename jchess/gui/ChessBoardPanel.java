@@ -4,15 +4,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import jchess.Board;
+import jchess.Move;
 import jchess.Piece;
 
 public class ChessBoardPanel extends JPanel {
@@ -21,15 +26,19 @@ public class ChessBoardPanel extends JPanel {
 
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
-    private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 128);
+    private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 64);
+    private final Color COLOR_HIGHLIGHT_DARK = new Color(20, 85, 30, 128);
 
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
 
     private int selectedSquare = -1;
+    private int hoveringSquare = -1;
 
     private int dragPiece = Piece.NONE;
     private Point dragPosition = new Point(0, 0);
+
+    private ArrayList<Integer> moveSquares = new ArrayList<>();
 
     private final Board board;
 
@@ -40,14 +49,27 @@ public class ChessBoardPanel extends JPanel {
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent event) {
-                int rank = event.getY() / SQUARE_SIZE;
-                int file = event.getX() / SQUARE_SIZE;
+                final int rank = event.getY() / SQUARE_SIZE;
+                final int file = event.getX() / SQUARE_SIZE;
 
-                selectedSquare = rank * 8 + file;
+                final int index = rank * 8 + file;
+
+                if (board.getSquare(index) == Piece.NONE) {
+                    return;
+                }
+
+                selectedSquare = index;
                 int piece = board.getSquare(selectedSquare);
 
                 dragPosition.setLocation(event.getX(), event.getY());
                 dragPiece = piece;
+
+                moveSquares.clear();
+                Move[] moves = board.generateMovesFor(selectedSquare);
+
+                for (Move move : moves) {
+                    moveSquares.add(move.toSquare());
+                }
 
                 repaint();
             }
@@ -64,16 +86,25 @@ public class ChessBoardPanel extends JPanel {
                 int toIndex = rank * 8 + file;
 
                 if (selectedSquare != toIndex) {
-                    board.makeMove(selectedSquare, toIndex);
+                    board.makeMove(new Move(selectedSquare, toIndex));
+                    selectedSquare = -1;
+                    moveSquares.clear();
                 }
 
                 dragPiece = Piece.NONE;
+                hoveringSquare = -1;
                 repaint();
             }
 
             @Override
             public void mouseDragged(MouseEvent event) {
                 dragPosition.setLocation(event.getX(), event.getY());
+
+                int rank = event.getY() / SQUARE_SIZE;
+                int file = event.getX() / SQUARE_SIZE;
+
+                hoveringSquare = rank * 8 + file;
+
                 repaint();
             }
         };
@@ -96,12 +127,8 @@ public class ChessBoardPanel extends JPanel {
         final int fontSize = 24;
         g.setFont(g.getFont().deriveFont((float) fontSize));
 
-        int rank = 0;
-        for (int i = 0; i < boardArray.length; i++) {
-            if (i > 0 && i % 8 == 0) {
-                rank++;
-            }
-
+        for (int i = 0; i < 64; i++) {
+            final int rank = i / 8;
             final int file = i % 8;
 
             final int squareX = file * SQUARE_SIZE;
@@ -112,7 +139,7 @@ public class ChessBoardPanel extends JPanel {
             g.setColor(isLightSquare ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
 
-            if (i == selectedSquare) {
+            if (i == selectedSquare || i == hoveringSquare) {
                 g.setColor(COLOR_HIGHLIGHT);
                 g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
             }
@@ -129,6 +156,7 @@ public class ChessBoardPanel extends JPanel {
                 );
             }
 
+            // Draw rank numbers on right-most file
             if (file == 7) {
                 g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
                 g.drawString(
@@ -138,6 +166,37 @@ public class ChessBoardPanel extends JPanel {
                 );
             }
 
+            if (moveSquares.contains(i)) {
+                g.setColor(COLOR_HIGHLIGHT_DARK);
+
+                if (board.getSquare(i) == Piece.NONE) {
+                    g.fillOval(
+                            squareX + SQUARE_SIZE / 2 - SQUARE_SIZE / 8,
+                            squareY + SQUARE_SIZE / 2 - SQUARE_SIZE / 8,
+                            SQUARE_SIZE / 4,
+                            SQUARE_SIZE / 4
+                    );
+                } else {
+                    final int holePadding = 10;
+
+                    var square = new Rectangle.Float(
+                            squareX, squareY, SQUARE_SIZE, SQUARE_SIZE
+                    );
+                    var hole = new Ellipse2D.Float(
+                            squareX - holePadding, squareY - holePadding,
+                            SQUARE_SIZE + holePadding * 2, SQUARE_SIZE + holePadding * 2
+                    );
+
+                    var clip = new Area(square);
+                    clip.subtract(new Area(hole));
+
+                    g.setClip(clip);
+                    g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
+                    g.setClip(null);
+                }
+            }
+
+            // Draw piece
             final int piece = boardArray[i];
 
             if (piece != Piece.NONE) {

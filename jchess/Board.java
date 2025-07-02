@@ -10,9 +10,19 @@ public class Board {
     private int fiftyMoveCounter = 0;
     private String enPassantSquare = null;
 
-    public void makeMove(int fromIndex, int toIndex) {
-        board[toIndex] = board[fromIndex];
-        board[fromIndex] = Piece.NONE;
+    public void makeMove(Move move) {
+        board[move.toSquare()] = board[move.fromSquare()];
+        board[move.fromSquare()] = Piece.NONE;
+    }
+
+    public Move[] generateMovesFor(int square) {
+        final int piece = board[square];
+
+        if (Piece.isType(piece, Piece.PAWN)) {
+            return new Move[]{new Move(6, 32)};
+        }
+
+        return new Move[]{new Move(5, 31)};
     }
 
     /**
