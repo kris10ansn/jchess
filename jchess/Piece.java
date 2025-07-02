@@ -16,6 +16,10 @@ public class Piece {
     private static final int COLOR_MASK = 0b11000;
     private static final int TYPE_MASK = 0b00111;
 
+    public static int create(int piece, int color) {
+        return piece | color;
+    }
+
     public static boolean isType(int piece, int pieceType) {
         return (piece & TYPE_MASK) == pieceType;
     }
@@ -44,7 +48,7 @@ public class Piece {
 
         boolean isWhite = Character.isUpperCase(fenChar);
 
-        return piece | (isWhite ? Piece.WHITE : Piece.BLACK);
+        return Piece.create(piece, isWhite ? Piece.WHITE : Piece.BLACK);
     }
 
     public static char toFenChar(int piece) {

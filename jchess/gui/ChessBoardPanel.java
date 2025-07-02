@@ -218,19 +218,19 @@ public class ChessBoardPanel extends JPanel {
 
     private void loadPieceImages() {
         try {
-            pieceImageMap.put(Piece.WHITE | Piece.PAWN, ImageIO.read(new File("./pieces/wP.png")));
-            pieceImageMap.put(Piece.WHITE | Piece.KING, ImageIO.read(new File("./pieces/wK.png")));
-            pieceImageMap.put(Piece.WHITE | Piece.KNIGHT, ImageIO.read(new File("./pieces/wN.png")));
-            pieceImageMap.put(Piece.WHITE | Piece.BISHOP, ImageIO.read(new File("./pieces/wB.png")));
-            pieceImageMap.put(Piece.WHITE | Piece.ROOK, ImageIO.read(new File("./pieces/wR.png")));
-            pieceImageMap.put(Piece.WHITE | Piece.QUEEN, ImageIO.read(new File("./pieces/wQ.png")));
+            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.WHITE), ImageIO.read(new File("./pieces/wP.png")));
+            pieceImageMap.put(Piece.create(Piece.KING, Piece.WHITE), ImageIO.read(new File("./pieces/wK.png")));
+            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.WHITE), ImageIO.read(new File("./pieces/wN.png")));
+            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.WHITE), ImageIO.read(new File("./pieces/wB.png")));
+            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.WHITE), ImageIO.read(new File("./pieces/wR.png")));
+            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.WHITE), ImageIO.read(new File("./pieces/wQ.png")));
 
-            pieceImageMap.put(Piece.BLACK | Piece.PAWN, ImageIO.read(new File("./pieces/bP.png")));
-            pieceImageMap.put(Piece.BLACK | Piece.KING, ImageIO.read(new File("./pieces/bK.png")));
-            pieceImageMap.put(Piece.BLACK | Piece.KNIGHT, ImageIO.read(new File("./pieces/bN.png")));
-            pieceImageMap.put(Piece.BLACK | Piece.BISHOP, ImageIO.read(new File("./pieces/bB.png")));
-            pieceImageMap.put(Piece.BLACK | Piece.ROOK, ImageIO.read(new File("./pieces/bR.png")));
-            pieceImageMap.put(Piece.BLACK | Piece.QUEEN, ImageIO.read(new File("./pieces/bQ.png")));
+            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.BLACK), ImageIO.read(new File("./pieces/bP.png")));
+            pieceImageMap.put(Piece.create(Piece.KING, Piece.BLACK), ImageIO.read(new File("./pieces/bK.png")));
+            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.BLACK), ImageIO.read(new File("./pieces/bN.png")));
+            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.BLACK), ImageIO.read(new File("./pieces/bB.png")));
+            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.BLACK), ImageIO.read(new File("./pieces/bR.png")));
+            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.BLACK), ImageIO.read(new File("./pieces/bQ.png")));
         } catch (IOException exception) {
             System.out.println(exception);
             System.exit(1);
