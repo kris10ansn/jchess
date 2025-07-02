@@ -38,17 +38,17 @@ public class Board {
         final int direction = isWhite ? -1 : 1;
 
         final long position = Bits.oneAt(square);
-
+        final long allPieces = whitePieces & blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            long singlePush = Bits.shift(position, 8 * direction);
-            long doublePush = Bits.shift(singlePush, 8 * direction);
+            long singlePush = Bits.shift(position, 8 * direction) & ~allPieces;
+            long doublePush = Bits.shift(singlePush, 8 * direction) & ~allPieces;
 
             long startingSquares = isWhite
                     ? BitBoard.WHITE_STARTING_SQUARES
                     : BitBoard.BLACK_STARTING_SQUARES;
 
-            if (Bits.overlap(position, startingSquares)) {
+            if (Bits.overlap(position, startingSquares) && singlePush != 0) {
                 return singlePush | doublePush;
             }
 
