@@ -36,6 +36,7 @@ public class Board {
 
         final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
         final int direction = isWhite ? -1 : 1;
+        final int up = direction * 8;
 
         final long position = Bits.oneAt(square);
         final long allPieces = whitePieces | blackPieces;
@@ -46,10 +47,11 @@ public class Board {
                     ? BitBoard.WHITE_STARTING_SQUARES
                     : BitBoard.BLACK_STARTING_SQUARES;
 
-            long singlePush = Bits.shift(position, 8 * direction) & ~allPieces;
-            long doublePush = Bits.shift(singlePush, 8 * direction)
-                    & ~allPieces
-                    & startingSquares;
+            long singlePush = Bits.shift(position, up) & ~allPieces;
+            long doublePush = Bits.shift(position, 2 * up)
+                    & Bits.shift(startingSquares, 2 * up)
+                    & Bits.shift(singlePush, up)
+                    & ~allPieces;
 
             long attacks = (Bits.oneAt(square + direction * 9)
                     | Bits.oneAt(square + direction * 7)) & opponentPieces;
