@@ -44,21 +44,17 @@ public class Board {
 
         // Piece placement data
         int pos = 0;
-
         for (char c : segments[0].toCharArray()) {
             if (c == '/') {
                 continue;
             }
-
             if (Character.isDigit(c)) {
                 pos += Character.getNumericValue(c);
-                continue;
+            } else {
+                setPiece(Piece.fromFenChar(c), pos);
+                pos++;
             }
 
-            final int piece = Piece.fromFenChar(c);
-
-            setPiece(piece, pos);
-            pos++;
         }
 
         // Active color data
