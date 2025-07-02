@@ -39,20 +39,22 @@ public class Board {
 
         final long position = Bits.oneAt(square);
         final long allPieces = whitePieces & blackPieces;
+        final long opponentPieces = isWhite ? blackPieces : whitePieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            long singlePush = Bits.shift(position, 8 * direction) & ~allPieces;
-            long doublePush = Bits.shift(singlePush, 8 * direction) & ~allPieces;
-
             long startingSquares = isWhite
                     ? BitBoard.WHITE_STARTING_SQUARES
                     : BitBoard.BLACK_STARTING_SQUARES;
 
-            if (Bits.overlap(position, startingSquares) && singlePush != 0) {
-                return singlePush | doublePush;
-            }
+            long singlePush = Bits.shift(position, 8 * direction) & ~allPieces;
+            long doublePush = Bits.shift(singlePush, 8 * direction)
+                    & ~allPieces
+                    & startingSquares;
 
-            return singlePush;
+            long attacks = (Bits.oneAt(square + direction * 9)
+                    | Bits.oneAt(square + direction * 7)) & opponentPieces;
+
+            return singlePush | doublePush | attacks;
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
