@@ -19,14 +19,30 @@ public class Board {
         removePiece(move.fromSquare());
     }
 
-    public int[] generateMovesFor(int square) {
+    public long generateMovesFor(int square) {
         final int piece = board[square];
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            return new int[]{32};
+            boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+            int direction = isWhite ? -1 : 1;
+
+            long bitboardPos = (1L << square);
+
+            long singlePush = BitBoardHelper.shift(bitboardPos, 8 * direction);
+            long doublePush = BitBoardHelper.shift(singlePush, 8 * direction);
+
+            long startingSquares = isWhite
+                    ? BitBoardHelper.WHITE_STARTING_SQUARES
+                    : BitBoardHelper.BLACK_STARTING_SQUARES;
+
+            if ((bitboardPos & startingSquares) > 0) {
+                return singlePush | doublePush;
+            }
+
+            return singlePush;
         }
 
-        return new int[]{31};
+        return 0L;
     }
 
     /**
@@ -175,8 +191,8 @@ public class Board {
 
         System.out.println("FEN: " + toFen());
 
-        System.out.println("White pieces: " + String.format("%64s", Long.toBinaryString(whitePieces)).replace(' ', '0'));
-        System.out.println("Black pieces: " + String.format("%64s", Long.toBinaryString(blackPieces)).replace(' ', '0'));
+        System.out.println("White pieces: " + BitBoardHelper.stringify(whitePieces));
+        System.out.println("Black pieces: " + BitBoardHelper.stringify(blackPieces));
 
     }
 

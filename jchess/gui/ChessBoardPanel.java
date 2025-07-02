@@ -12,10 +12,10 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import jchess.BitBoardHelper;
 import jchess.Board;
 import jchess.Move;
 import jchess.Piece;
@@ -38,7 +38,7 @@ public class ChessBoardPanel extends JPanel {
     private int dragPiece = Piece.NONE;
     private Point dragPosition = new Point(0, 0);
 
-    private ArrayList<Integer> moveSquares = new ArrayList<>();
+    private long moveSquares = 0L;
 
     private final Board board;
 
@@ -64,12 +64,7 @@ public class ChessBoardPanel extends JPanel {
                 dragPosition.setLocation(event.getX(), event.getY());
                 dragPiece = piece;
 
-                moveSquares.clear();
-                int[] moves = board.generateMovesFor(selectedSquare);
-
-                for (int move : moves) {
-                    moveSquares.add(move);
-                }
+                moveSquares = board.generateMovesFor(selectedSquare);
 
                 repaint();
             }
@@ -88,7 +83,7 @@ public class ChessBoardPanel extends JPanel {
                 if (selectedSquare != toIndex) {
                     board.makeMove(new Move(selectedSquare, toIndex));
                     selectedSquare = -1;
-                    moveSquares.clear();
+                    moveSquares = 0L;
                 }
 
                 dragPiece = Piece.NONE;
@@ -170,7 +165,7 @@ public class ChessBoardPanel extends JPanel {
                 );
             }
 
-            if (moveSquares.contains(i)) {
+            if (BitBoardHelper.getBit(moveSquares, i)) {
                 g.setColor(COLOR_HIGHLIGHT_DARK);
 
                 if (board.getSquare(i) == Piece.NONE) {
