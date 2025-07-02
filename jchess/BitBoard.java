@@ -11,6 +11,15 @@ public class BitBoard {
     public static final long RANK_2 = RANK_3 << 8;
     public static final long RANK_1 = RANK_2 << 8;
 
+    public static final long FILE_1 = 0x0101010101010101L;
+    public static final long FILE_2 = FILE_1 << 1L;
+    public static final long FILE_3 = FILE_2 << 1L;
+    public static final long FILE_4 = FILE_3 << 1L;
+    public static final long FILE_5 = FILE_4 << 1L;
+    public static final long FILE_6 = FILE_5 << 1L;
+    public static final long FILE_7 = FILE_6 << 1L;
+    public static final long FILE_8 = FILE_7 << 1L;
+
     public static final long WHITE_STARTING_SQUARES = RANK_1 | RANK_2;
     public static final long BLACK_STARTING_SQUARES = RANK_7 | RANK_8;
 
