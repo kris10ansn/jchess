@@ -15,8 +15,8 @@ public class Board {
     private long blackPieces = 0;
 
     public void makeMove(Move move) {
-        board[move.toSquare()] = board[move.fromSquare()];
-        board[move.fromSquare()] = Piece.NONE;
+        setPiece(board[move.fromSquare()], move.toSquare());
+        removePiece(move.fromSquare());
     }
 
     public int[] generateMovesFor(int square) {
@@ -57,13 +57,7 @@ public class Board {
 
             final int piece = Piece.fromFenChar(c);
 
-            if (Piece.isColor(piece, Piece.WHITE)) {
-                whitePieces |= (1L << pos);
-            } else {
-                blackPieces |= (1L << pos);
-            }
-
-            board[pos] = piece;
+            setPiece(piece, pos);
             pos++;
         }
 
@@ -196,5 +190,22 @@ public class Board {
 
     public int getSquare(int index) {
         return board[index];
+    }
+
+    private void setPiece(int piece, int position) {
+        if (Piece.isColor(piece, Piece.WHITE)) {
+            whitePieces |= (1L << position);
+        } else {
+            blackPieces |= (1L << position);
+        }
+
+        board[position] = piece;
+    }
+
+    private void removePiece(int position) {
+        whitePieces &= ~(1L << position);
+        blackPieces &= ~(1L << position);
+
+        board[position] = Piece.NONE;
     }
 }
