@@ -34,10 +34,11 @@ public class Board {
     public long generateMovesFor(int square) {
         final int piece = board[square];
 
-        long position = Bits.oneAt(square);
+        final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+        final int direction = isWhite ? -1 : 1;
 
-        boolean isWhite = Piece.isColor(piece, Piece.WHITE);
-        int direction = isWhite ? -1 : 1;
+        final long position = Bits.oneAt(square);
+
 
         if (Piece.isType(piece, Piece.PAWN)) {
             long singlePush = Bits.shift(position, 8 * direction);
