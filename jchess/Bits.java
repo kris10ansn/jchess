@@ -15,6 +15,6 @@ public class Bits {
     }
 
     public static boolean getBit(long l, int pos) {
-        return (l & (1L << pos)) != 0;
+        return overlap(l, oneAt(pos));
     }
 }
