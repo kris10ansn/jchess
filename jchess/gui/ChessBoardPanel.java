@@ -27,8 +27,7 @@ public class ChessBoardPanel extends JPanel {
 
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
-    private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 64);
-    private final Color COLOR_HIGHLIGHT_DARK = new Color(20, 85, 30, 128);
+    private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 128);
 
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
@@ -172,10 +171,8 @@ public class ChessBoardPanel extends JPanel {
             if (i == selectedSquare || i == hoveringSquare) {
                 g.setColor(COLOR_HIGHLIGHT);
                 g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
-            }
-
-            if (Bits.getBit(moveSquares, i)) {
-                g.setColor(COLOR_HIGHLIGHT_DARK);
+            } else if (Bits.getBit(moveSquares, i)) {
+                g.setColor(COLOR_HIGHLIGHT);
 
                 if (board.getSquare(i) == Piece.NONE) {
                     g.fillOval(
