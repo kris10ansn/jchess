@@ -101,8 +101,9 @@ public class ChessBoardPanel extends JPanel {
 
                 int rank = event.getY() / SQUARE_SIZE;
                 int file = event.getX() / SQUARE_SIZE;
+                int index = rank * 8 + file;
 
-                hoveringSquare = rank * 8 + file;
+                hoveringSquare = ((1L << index) & moveSquares) > 0 ? index : -1;
 
                 repaint();
             }
