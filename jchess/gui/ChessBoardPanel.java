@@ -15,7 +15,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import jchess.BitBoardHelper;
+import jchess.BitBoard;
+import jchess.Bits;
 import jchess.Board;
 import jchess.Move;
 import jchess.Piece;
@@ -104,8 +105,8 @@ public class ChessBoardPanel extends JPanel {
                 int index = rank * 8 + file;
 
                 hoveringSquare
-                        = BitBoardHelper.overlaps(
-                                BitBoardHelper.createPositionBoard(index),
+                        = Bits.overlap(
+                                BitBoard.createPositionBoard(index),
                                 moveSquares
                         )
                         ? index : -1;
@@ -171,7 +172,7 @@ public class ChessBoardPanel extends JPanel {
                 );
             }
 
-            if (BitBoardHelper.getBit(moveSquares, i)) {
+            if (Bits.getBit(moveSquares, i)) {
                 g.setColor(COLOR_HIGHLIGHT_DARK);
 
                 if (board.getSquare(i) == Piece.NONE) {

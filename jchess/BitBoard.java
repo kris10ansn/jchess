@@ -1,6 +1,6 @@
 package jchess;
 
-public class BitBoardHelper {
+public class BitBoard {
 
     public static final long RANK_8 = 0b11111111;
     public static final long RANK_7 = RANK_8 << 8;
@@ -16,18 +16,6 @@ public class BitBoardHelper {
 
     public static long createPositionBoard(int pos) {
         return 1L << pos;
-    }
-
-    public static boolean overlaps(long l1, long l2) {
-        return (l1 & l2) > 0;
-    }
-
-    public static long shift(long l, int n) {
-        return n > 0 ? l << n : l >> -n;
-    }
-
-    public static boolean getBit(long l, int pos) {
-        return (l & (1L << pos)) > 0;
     }
 
     public static String stringify(long l) {

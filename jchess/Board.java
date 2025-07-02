@@ -25,29 +25,29 @@ public class Board {
     }
 
     public boolean isLegalMove(Move move) {
-        return BitBoardHelper.overlaps(
+        return Bits.overlap(
                 generateMovesFor(move.fromSquare()),
-                (BitBoardHelper.createPositionBoard(move.toSquare()))
+                (BitBoard.createPositionBoard(move.toSquare()))
         );
     }
 
     public long generateMovesFor(int square) {
         final int piece = board[square];
 
-        long position = BitBoardHelper.createPositionBoard(square);
+        long position = BitBoard.createPositionBoard(square);
 
         boolean isWhite = Piece.isColor(piece, Piece.WHITE);
         int direction = isWhite ? -1 : 1;
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            long singlePush = BitBoardHelper.shift(position, 8 * direction);
-            long doublePush = BitBoardHelper.shift(singlePush, 8 * direction);
+            long singlePush = Bits.shift(position, 8 * direction);
+            long doublePush = Bits.shift(singlePush, 8 * direction);
 
             long startingSquares = isWhite
-                    ? BitBoardHelper.WHITE_STARTING_SQUARES
-                    : BitBoardHelper.BLACK_STARTING_SQUARES;
+                    ? BitBoard.WHITE_STARTING_SQUARES
+                    : BitBoard.BLACK_STARTING_SQUARES;
 
-            if (BitBoardHelper.overlaps(position, startingSquares)) {
+            if (Bits.overlap(position, startingSquares)) {
                 return singlePush | doublePush;
             }
 
@@ -203,8 +203,8 @@ public class Board {
 
         System.out.println("FEN: " + toFen());
 
-        System.out.println("White pieces: " + BitBoardHelper.stringify(whitePieces));
-        System.out.println("Black pieces: " + BitBoardHelper.stringify(blackPieces));
+        System.out.println("White pieces: " + BitBoard.stringify(whitePieces));
+        System.out.println("Black pieces: " + BitBoard.stringify(blackPieces));
 
     }
 

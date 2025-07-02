@@ -25,6 +25,6 @@ public class CastlingRights {
 
     public boolean hasCastlingRight(int color, boolean kingside) {
         final int mask = getMask(color, kingside);
-        return (castlingRights & mask) > 0;
+        return Bits.overlap(castlingRights, mask);
     }
 }
