@@ -15,8 +15,17 @@ public class Board {
     private long blackPieces = 0;
 
     public void makeMove(Move move) {
+        if (!isLegalMove(move)) {
+            System.out.println("Illegal move!");
+            return;
+        }
+
         setPiece(board[move.fromSquare()], move.toSquare());
         removePiece(move.fromSquare());
+    }
+
+    public boolean isLegalMove(Move move) {
+        return (generateMovesFor(move.fromSquare()) & (1L << move.toSquare())) > 0;
     }
 
     public long generateMovesFor(int square) {
