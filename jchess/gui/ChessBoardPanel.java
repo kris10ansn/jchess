@@ -174,28 +174,6 @@ public class ChessBoardPanel extends JPanel {
                 g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
             }
 
-            // Draw file characters on the lowest rank
-            if (rank == 7) {
-                // Get character by adding the file index to 'a' (0='a', 1='b', ...)
-                final char fileCharacter = (char) ('a' + file);
-                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
-                g.drawString(
-                        String.valueOf(fileCharacter),
-                        squareX + fontSize / 8,
-                        squareY + SQUARE_SIZE - fontSize / 8
-                );
-            }
-
-            // Draw rank numbers on right-most file
-            if (file == 7) {
-                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
-                g.drawString(
-                        String.valueOf(8 - rank),
-                        squareX + SQUARE_SIZE - fontSize / 2 - fontSize / 8,
-                        squareY + fontSize + fontSize / 8
-                );
-            }
-
             if (Bits.getBit(moveSquares, i)) {
                 g.setColor(COLOR_HIGHLIGHT_DARK);
 
@@ -224,6 +202,28 @@ public class ChessBoardPanel extends JPanel {
                     g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
                     g.setClip(null);
                 }
+            }
+
+            // Draw file characters on the lowest rank
+            if (rank == 7) {
+                // Get character by adding the file index to 'a' (0='a', 1='b', ...)
+                final char fileCharacter = (char) ('a' + file);
+                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+                g.drawString(
+                        String.valueOf(fileCharacter),
+                        squareX + fontSize / 8,
+                        squareY + SQUARE_SIZE - fontSize / 8
+                );
+            }
+
+            // Draw rank numbers on right-most file
+            if (file == 7) {
+                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+                g.drawString(
+                        String.valueOf(8 - rank),
+                        squareX + SQUARE_SIZE - fontSize / 2 - fontSize / 8,
+                        squareY + fontSize + fontSize / 8
+                );
             }
 
             // Draw piece
