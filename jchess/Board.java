@@ -15,14 +15,14 @@ public class Board {
         board[move.fromSquare()] = Piece.NONE;
     }
 
-    public Move[] generateMovesFor(int square) {
+    public int[] generateMovesFor(int square) {
         final int piece = board[square];
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            return new Move[]{new Move(6, 32)};
+            return new int[]{32};
         }
 
-        return new Move[]{new Move(5, 31)};
+        return new int[]{31};
     }
 
     /**

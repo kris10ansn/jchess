@@ -65,10 +65,10 @@ public class ChessBoardPanel extends JPanel {
                 dragPiece = piece;
 
                 moveSquares.clear();
-                Move[] moves = board.generateMovesFor(selectedSquare);
+                int[] moves = board.generateMovesFor(selectedSquare);
 
-                for (Move move : moves) {
-                    moveSquares.add(move.toSquare());
+                for (int move : moves) {
+                    moveSquares.add(move);
                 }
 
                 repaint();
