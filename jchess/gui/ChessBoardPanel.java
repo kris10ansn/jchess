@@ -64,6 +64,9 @@ public class ChessBoardPanel extends JPanel {
                 }
 
                 if (board.getSquare(index) == Piece.NONE) {
+                    selectedSquare = -1;
+                    moveSquares = 0;
+                    repaint();
                     return;
                 }
 
