@@ -54,13 +54,22 @@ public class ChessBoardPanel extends JPanel {
                 final int file = event.getX() / SQUARE_SIZE;
 
                 final int index = rank * 8 + file;
+                final int piece = board.getSquare(index);
+
+                if (Bits.overlap(moveSquares, BitBoard.createPositionBoard(index))) {
+                    board.makeMove(new Move(selectedSquare, index));
+                    moveSquares = 0;
+                    selectedSquare = -1;
+                    hoveringSquare = -1;
+                    repaint();
+                    return;
+                }
 
                 if (board.getSquare(index) == Piece.NONE) {
                     return;
                 }
 
                 selectedSquare = index;
-                int piece = board.getSquare(selectedSquare);
 
                 dragPosition.setLocation(event.getX(), event.getY());
                 dragPiece = piece;
@@ -72,17 +81,17 @@ public class ChessBoardPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent event) {
+                int rank = event.getY() / SQUARE_SIZE;
+                int file = event.getX() / SQUARE_SIZE;
+
+                int index = rank * 8 + file;
+
                 if (dragPiece == Piece.NONE) {
                     return;
                 }
 
-                int rank = event.getY() / SQUARE_SIZE;
-                int file = event.getX() / SQUARE_SIZE;
-
-                int toIndex = rank * 8 + file;
-
-                if (selectedSquare != toIndex) {
-                    board.makeMove(new Move(selectedSquare, toIndex));
+                if (selectedSquare != index) {
+                    board.makeMove(new Move(selectedSquare, index));
                     selectedSquare = -1;
                     moveSquares = 0L;
                 }
@@ -112,6 +121,21 @@ public class ChessBoardPanel extends JPanel {
                         ? index : -1;
 
                 repaint();
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent event) {
+                int rank = event.getY() / SQUARE_SIZE;
+                int file = event.getX() / SQUARE_SIZE;
+                int index = rank * 8 + file;
+
+                if (Bits.overlap(moveSquares, BitBoard.createPositionBoard(index))) {
+                    hoveringSquare = index;
+                    repaint();
+                } else {
+                    hoveringSquare = -1;
+                    repaint();
+                }
             }
         };
 
