@@ -10,6 +10,10 @@ public class Board {
     private int fiftyMoveCounter = 0;
     private String enPassantSquare = null;
 
+    // Piece placement bitboards
+    private long whitePieces = 0;
+    private long blackPieces = 0;
+
     public void makeMove(Move move) {
         board[move.toSquare()] = board[move.fromSquare()];
         board[move.fromSquare()] = Piece.NONE;
@@ -51,7 +55,15 @@ public class Board {
                 continue;
             }
 
-            board[pos] = Piece.fromFenChar(c);
+            final int piece = Piece.fromFenChar(c);
+
+            if (Piece.isColor(piece, Piece.WHITE)) {
+                whitePieces |= (1L << pos);
+            } else {
+                blackPieces |= (1L << pos);
+            }
+
+            board[pos] = piece;
             pos++;
         }
 
@@ -172,6 +184,10 @@ public class Board {
         System.out.println();
 
         System.out.println("FEN: " + toFen());
+
+        System.out.println("White pieces: " + String.format("%64s", Long.toBinaryString(whitePieces)).replace(' ', '0'));
+        System.out.println("Black pieces: " + String.format("%64s", Long.toBinaryString(blackPieces)).replace(' ', '0'));
+
     }
 
     public int[] getBoard() {
