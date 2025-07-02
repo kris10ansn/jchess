@@ -54,6 +54,12 @@ public class Board {
             return singlePush;
         }
 
+        if (Piece.isType(piece, Piece.KNIGHT)) {
+            int offset = 64 - 19;
+            return Bits.shift(BitBoard.KNIGHT_MOVES, -offset + square);
+
+        }
+
         return 0L;
     }
 

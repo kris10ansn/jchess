@@ -14,6 +14,8 @@ public class BitBoard {
     public static final long WHITE_STARTING_SQUARES = RANK_1 | RANK_2;
     public static final long BLACK_STARTING_SQUARES = RANK_7 | RANK_8;
 
+    public static final long KNIGHT_MOVES = 0b01010000_10001000_00000000_10001000_01010000_00000000_00000000_00000000L;
+
     public static long createPositionBoard(int pos) {
         return 1L << pos;
     }
