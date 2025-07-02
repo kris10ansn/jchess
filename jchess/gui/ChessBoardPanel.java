@@ -103,7 +103,12 @@ public class ChessBoardPanel extends JPanel {
                 int file = event.getX() / SQUARE_SIZE;
                 int index = rank * 8 + file;
 
-                hoveringSquare = ((1L << index) & moveSquares) > 0 ? index : -1;
+                hoveringSquare
+                        = BitBoardHelper.overlaps(
+                                BitBoardHelper.createPositionBoard(index),
+                                moveSquares
+                        )
+                        ? index : -1;
 
                 repaint();
             }

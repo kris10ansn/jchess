@@ -25,26 +25,29 @@ public class Board {
     }
 
     public boolean isLegalMove(Move move) {
-        return (generateMovesFor(move.fromSquare()) & (1L << move.toSquare())) > 0;
+        return BitBoardHelper.overlaps(
+                generateMovesFor(move.fromSquare()),
+                (BitBoardHelper.createPositionBoard(move.toSquare()))
+        );
     }
 
     public long generateMovesFor(int square) {
         final int piece = board[square];
 
+        long position = BitBoardHelper.createPositionBoard(square);
+
+        boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+        int direction = isWhite ? -1 : 1;
+
         if (Piece.isType(piece, Piece.PAWN)) {
-            boolean isWhite = Piece.isColor(piece, Piece.WHITE);
-            int direction = isWhite ? -1 : 1;
-
-            long bitboardPos = (1L << square);
-
-            long singlePush = BitBoardHelper.shift(bitboardPos, 8 * direction);
+            long singlePush = BitBoardHelper.shift(position, 8 * direction);
             long doublePush = BitBoardHelper.shift(singlePush, 8 * direction);
 
             long startingSquares = isWhite
                     ? BitBoardHelper.WHITE_STARTING_SQUARES
                     : BitBoardHelper.BLACK_STARTING_SQUARES;
 
-            if ((bitboardPos & startingSquares) > 0) {
+            if (BitBoardHelper.overlaps(position, startingSquares)) {
                 return singlePush | doublePush;
             }
 

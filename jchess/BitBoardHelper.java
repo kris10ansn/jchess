@@ -14,6 +14,14 @@ public class BitBoardHelper {
     public static final long WHITE_STARTING_SQUARES = RANK_1 | RANK_2;
     public static final long BLACK_STARTING_SQUARES = RANK_7 | RANK_8;
 
+    public static long createPositionBoard(int pos) {
+        return 1L << pos;
+    }
+
+    public static boolean overlaps(long l1, long l2) {
+        return (l1 & l2) > 0;
+    }
+
     public static long shift(long l, int n) {
         return n > 0 ? l << n : l >> -n;
     }
