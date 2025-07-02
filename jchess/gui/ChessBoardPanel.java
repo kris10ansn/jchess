@@ -98,6 +98,10 @@ public class ChessBoardPanel extends JPanel {
 
             @Override
             public void mouseDragged(MouseEvent event) {
+                if (dragPiece == Piece.NONE) {
+                    return;
+                }
+
                 dragPosition.setLocation(event.getX(), event.getY());
 
                 int rank = event.getY() / SQUARE_SIZE;
