@@ -41,6 +41,7 @@ public class Board {
         final long position = Bits.oneAt(square);
         final long allPieces = whitePieces | blackPieces;
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
+        final long ownPieces = isWhite ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
             long startingSquares = isWhite
@@ -60,7 +61,7 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return BitBoard.getKnightMovesMaskedAndShifted(square) & ~whitePieces;
+            return BitBoard.getKnightMovesMaskedAndShifted(square) & ~ownPieces;
         }
 
         return 0L;
