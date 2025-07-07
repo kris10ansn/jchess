@@ -21,7 +21,6 @@ public class Notation {
     }
 
     public static String getFileCharacter(int file) {
-        return String.valueOf('a' + file);
+        return String.valueOf((char) ('a' + file));
     }
-
 }
