@@ -191,7 +191,7 @@ public class Board {
         fen += castlingRights.toFenString();
 
         // En passant square data
-        fen += " " + (enPassantSquare != null ? enPassantSquare : "-");
+        fen += " " + (enPassantSquare != -1 ? Notation.toNotation(enPassantSquare) : "-");
 
         // Halfmove data
         fen += " " + fiftyMoveCounter;
