@@ -2,6 +2,8 @@ package jchess.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -32,6 +34,8 @@ public class ChessBoardPanel extends JPanel {
 
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
+    private final int FONT_SIZE = 24;
+    private final int FONT_PADDING = FONT_SIZE / 6;
 
     private final Point dragPosition = new Point(0, 0);
 
@@ -110,17 +114,13 @@ public class ChessBoardPanel extends JPanel {
 
         final int[] boardArray = board.getBoard();
 
-        final int fontSize = 24;
-        g.setFont(g.getFont().deriveFont((float) fontSize));
-
         for (int i = 0; i < 64; i++) {
             final Square square = new Square(i);
 
             final int squareX = square.getFile() * SQUARE_SIZE;
             final int squareY = square.getRank() * SQUARE_SIZE;
-            final boolean isLightSquare = (i + square.getRank()) % 2 == 0;
 
-            g.setColor(isLightSquare ? COLOR_LIGHT : COLOR_DARK);
+            g.setColor(square.isLightSquare() ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
 
             if (isHighlighted(i)) {
@@ -156,25 +156,14 @@ public class ChessBoardPanel extends JPanel {
                 }
             }
 
-            // Set opposite color to draw file/rank notation
-            g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
-
             // Draw file characters on the lowest rank
             if (square.getRank() == 7) {
-                g.drawString(
-                        Notation.getFileCharacter(square.getFile()),
-                        squareX + fontSize / 8,
-                        squareY + SQUARE_SIZE - fontSize / 8
-                );
+                drawIndicator(g, Notation.getFileCharacter(square.getFile()), square, false);
             }
 
             // Draw rank numbers on right-most file
             if (square.getFile() == 7) {
-                g.drawString(
-                        String.valueOf(8 - square.getRank()),
-                        squareX + SQUARE_SIZE - fontSize / 2 - fontSize / 8,
-                        squareY + fontSize + fontSize / 8
-                );
+                drawIndicator(g, String.valueOf(8 - square.getRank()), square, true);
             }
 
             // Draw piece
@@ -191,6 +180,27 @@ public class ChessBoardPanel extends JPanel {
             g.drawImage(pieceImage, dragPosition.x - SQUARE_SIZE / 2, dragPosition.y - SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE, this);
         }
 
+    }
+
+    private void drawIndicator(Graphics g, String indicator, Square square, boolean topRight) {
+        Font font = g.getFont().deriveFont((float) FONT_SIZE).deriveFont(Font.BOLD);
+        g.setFont(font);
+        g.setColor(square.isLightSquare() ? COLOR_DARK : COLOR_LIGHT);
+
+        FontMetrics fontMetrics = g.getFontMetrics();
+
+        int x = square.getFile() * SQUARE_SIZE;
+        int y = square.getRank() * SQUARE_SIZE;
+
+        if (topRight) {
+            x += SQUARE_SIZE - fontMetrics.charWidth(indicator.charAt(0)) - FONT_PADDING;
+            y += FONT_SIZE + FONT_PADDING;
+        } else {
+            x += FONT_PADDING;
+            y += SQUARE_SIZE - FONT_PADDING;
+        }
+
+        g.drawString(indicator, x, y);
     }
 
     private boolean isHighlighted(int index) {
