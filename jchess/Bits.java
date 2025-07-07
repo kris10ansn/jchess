@@ -17,4 +17,18 @@ public class Bits {
     public static boolean getBit(long l, int pos) {
         return overlap(l, oneAt(pos));
     }
+
+    public static long setBit(long l, int pos) {
+        return l | oneAt(pos);
+    }
+
+    public static long clearBit(long l, int pos) {
+        return l & ~oneAt(pos);
+    }
+
+    public static long clearBits(long l, int from, int to) {
+        final long mask = ~(((1L << (to - from + 1)) - 1) << from);
+        return l & mask;
+    }
+
 }
