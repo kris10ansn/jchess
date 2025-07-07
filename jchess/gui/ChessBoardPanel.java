@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,10 @@ public class ChessBoardPanel extends JPanel {
 
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
+
+    private final int MOVE_CIRCLE_SIZE = SQUARE_SIZE / 4;
+    private final int MOVE_HOLE_SIZE = SQUARE_SIZE / 12;
+
     private final int FONT_SIZE = 24;
     private final int FONT_PADDING = FONT_SIZE / 6;
 
@@ -118,67 +123,34 @@ public class ChessBoardPanel extends JPanel {
         for (int i = 0; i < 64; i++) {
             final Square square = new Square(i);
 
-            final int squareX = square.getFile() * SQUARE_SIZE;
-            final int squareY = square.getRank() * SQUARE_SIZE;
-
-            g.setColor(square.isLightSquare() ? COLOR_LIGHT : COLOR_DARK);
-            g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
+            drawSquare(g, square);
 
             if (isHighlighted(i)) {
-                g.setColor(COLOR_HIGHLIGHT);
-                g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
-            } else if (Bits.getBit(moveSquares, i)) {
-                g.setColor(COLOR_HIGHLIGHT);
-
-                if (board.getSquare(i) == Piece.NONE) {
-                    g.fillOval(
-                            squareX + SQUARE_SIZE / 2 - SQUARE_SIZE / 8,
-                            squareY + SQUARE_SIZE / 2 - SQUARE_SIZE / 8,
-                            SQUARE_SIZE / 4,
-                            SQUARE_SIZE / 4
-                    );
-                } else {
-                    final int holePadding = 10;
-
-                    var rect = new Rectangle.Float(
-                            squareX, squareY, SQUARE_SIZE, SQUARE_SIZE
-                    );
-                    var hole = new Ellipse2D.Float(
-                            squareX - holePadding, squareY - holePadding,
-                            SQUARE_SIZE + holePadding * 2, SQUARE_SIZE + holePadding * 2
-                    );
-
-                    var clip = new Area(rect);
-                    clip.subtract(new Area(hole));
-
-                    g.setClip(clip);
-                    g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
-                    g.setClip(null);
-                }
+                drawHighlight(g, square);
+            } else if (inMoves(i)) {
+                drawMoveHighlight(g, square);
             }
 
-            // Draw file characters on the lowest rank
             if (square.getRank() == 7) {
-                drawIndicator(g, Notation.getFileCharacter(square.getFile()), square, false);
+                final String file = Notation.getFileCharacter(square.getFile());
+                drawIndicator(g, file, square, false);
             }
 
-            // Draw rank numbers on right-most file
             if (square.getFile() == 7) {
-                drawIndicator(g, String.valueOf(8 - square.getRank()), square, true);
+                final String rank = String.valueOf(8 - square.getRank());
+                drawIndicator(g, rank, square, true);
             }
 
             // Draw piece
             final int piece = boardArray[i];
 
             if (piece != Piece.NONE) {
-                final BufferedImage pieceImage = pieceImageMap.get(piece);
-                g.drawImage(pieceImage, squareX, squareY, SQUARE_SIZE, SQUARE_SIZE, this);
+                drawPiece(g, piece, square);
             }
         }
 
         if (dragPiece != Piece.NONE) {
-            final BufferedImage pieceImage = pieceImageMap.get(dragPiece);
-            g.drawImage(pieceImage, dragPosition.x - SQUARE_SIZE / 2, dragPosition.y - SQUARE_SIZE / 2, SQUARE_SIZE, SQUARE_SIZE, this);
+            drawPiece(g, dragPiece, dragPosition);
         }
 
     }
@@ -204,12 +176,65 @@ public class ChessBoardPanel extends JPanel {
         g.drawString(indicator, x, y);
     }
 
+    private void drawMoveHighlight(Graphics g, Square square) {
+        g.setColor(COLOR_HIGHLIGHT);
+
+        final int x = square.getX(SQUARE_SIZE);
+        final int y = square.getY(SQUARE_SIZE);
+
+        if (board.getSquare(square) == Piece.NONE) {
+            g.fillOval(
+                    x + SQUARE_SIZE / 2 - MOVE_CIRCLE_SIZE / 2,
+                    y + SQUARE_SIZE / 2 - MOVE_CIRCLE_SIZE / 2,
+                    MOVE_CIRCLE_SIZE,
+                    MOVE_CIRCLE_SIZE
+            );
+        } else {
+            Rectangle2D rect = new Rectangle.Float(x, y, SQUARE_SIZE, SQUARE_SIZE);
+            Ellipse2D hole = new Ellipse2D.Float(
+                    x - MOVE_HOLE_SIZE, y - MOVE_HOLE_SIZE,
+                    SQUARE_SIZE + MOVE_HOLE_SIZE * 2, SQUARE_SIZE + MOVE_HOLE_SIZE * 2
+            );
+
+            Area clip = new Area(rect);
+            clip.subtract(new Area(hole));
+
+            g.setClip(clip);
+            g.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
+            g.setClip(null);
+        }
+    }
+
+    private void drawSquare(Graphics g, Square square) {
+        g.setColor(square.isLightSquare() ? COLOR_LIGHT : COLOR_DARK);
+        g.fillRect(square.getX(SQUARE_SIZE), square.getY(SQUARE_SIZE), SQUARE_SIZE, SQUARE_SIZE);
+    }
+
+    private void drawHighlight(Graphics g, Square square) {
+        g.setColor(COLOR_HIGHLIGHT);
+        g.fillRect(square.getX(SQUARE_SIZE), square.getY(SQUARE_SIZE), SQUARE_SIZE, SQUARE_SIZE);
+    }
+
+    private void drawPiece(Graphics g, int piece, Point point) {
+        final BufferedImage pieceImage = pieceImageMap.get(piece);
+        g.drawImage(
+                pieceImage,
+                point.x - SQUARE_SIZE / 2,
+                point.y - SQUARE_SIZE / 2,
+                SQUARE_SIZE, SQUARE_SIZE, null
+        );
+    }
+
+    private void drawPiece(Graphics g, int piece, Square square) {
+        drawPiece(g, piece, square.getPoint(SQUARE_SIZE));
+    }
+
     private boolean isHighlighted(int index) {
         return isSelected(index) || isHovering(index);
     }
 
     private boolean inMoves(int index) {
-        return Bits.overlap(moveSquares, Bits.oneAt(index));
+        return Bits.getBit(moveSquares, index);
     }
 
     private void setHovering(int index) {
