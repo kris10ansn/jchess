@@ -28,6 +28,10 @@ public class Square {
         return Bits.oneAt(index);
     }
 
+    public boolean isLightSquare() {
+        return (index + getRank()) % 2 == 0;
+    }
+
     public static int toIndex(int file, int rank) {
         return rank * 8 + file;
     }
