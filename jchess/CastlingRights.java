@@ -27,4 +27,23 @@ public class CastlingRights {
         final int mask = getMask(color, kingside);
         return Bits.overlap(castlingRights, mask);
     }
+
+    public String toFenString() {
+        String result = "";
+
+        if (hasCastlingRight(Piece.WHITE, true)) {
+            result += 'K';
+        }
+        if (hasCastlingRight(Piece.WHITE, false)) {
+            result += 'Q';
+        }
+        if (hasCastlingRight(Piece.BLACK, true)) {
+            result += 'k';
+        }
+        if (hasCastlingRight(Piece.BLACK, false)) {
+            result += 'q';
+        }
+
+        return result;
+    }
 }

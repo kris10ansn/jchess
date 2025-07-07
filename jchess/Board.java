@@ -188,18 +188,7 @@ public class Board {
         // Castling rights data
         fen += " ";
 
-        if (castlingRights.hasCastlingRight(Piece.WHITE, true)) {
-            fen += 'K';
-        }
-        if (castlingRights.hasCastlingRight(Piece.WHITE, false)) {
-            fen += 'Q';
-        }
-        if (castlingRights.hasCastlingRight(Piece.BLACK, true)) {
-            fen += 'k';
-        }
-        if (castlingRights.hasCastlingRight(Piece.BLACK, false)) {
-            fen += 'q';
-        }
+        fen += castlingRights.toFenString();
 
         // En passant square data
         fen += " " + (enPassantSquare != null ? enPassantSquare : "-");
