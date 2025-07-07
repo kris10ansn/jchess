@@ -60,17 +60,15 @@ public class ChessBoardPanel extends JPanel {
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent event) {
-                final int rank = event.getY() / SQUARE_SIZE;
-                final int file = event.getX() / SQUARE_SIZE;
-                final int index = Square.toIndex(file, rank);
-                final int piece = board.getSquare(index);
+                Square square = getSquare(event);
+                final int piece = board.getSquare(square.getIndex());
 
-                if (inMoves(index)) {
-                    moveSelectedPiece(index);
+                if (inMoves(square.getIndex())) {
+                    moveSelectedPiece(square.getIndex());
                 } else if (piece == Piece.NONE) {
                     clearSelection();
                 } else {
-                    selectSquare(index);
+                    selectSquare(square.getIndex());
                     startDrag(event.getX(), event.getY(), piece);
                 }
 
@@ -91,17 +89,15 @@ public class ChessBoardPanel extends JPanel {
 
             @Override
             public void mouseMoved(MouseEvent event) {
-                int rank = event.getY() / SQUARE_SIZE;
-                int file = event.getX() / SQUARE_SIZE;
-                int index = Square.toIndex(file, rank);
+                Square square = getSquare(event);
 
-                if (Bits.overlap(moveSquares, Bits.oneAt(index))) {
-                    hoveringSquare = index;
-                    repaint();
+                if (inMoves(square.getIndex())) {
+                    setHovering(square.getIndex());
                 } else {
-                    hoveringSquare = -1;
-                    repaint();
+                    clearHovering();
                 }
+
+                repaint();
             }
         };
 
@@ -276,29 +272,32 @@ public class ChessBoardPanel extends JPanel {
 
     private void doDrag(int x, int y) {
         dragPosition.setLocation(x, y);
+        Square square = getSquare(x, y);
 
-        final int rank = y / SQUARE_SIZE;
-        final int file = x / SQUARE_SIZE;
-        final int index = Square.toIndex(file, rank);
-
-        if (inMoves(index)) {
-            setHovering(index);
+        if (inMoves(square.getIndex())) {
+            setHovering(square.getIndex());
         } else {
             clearHovering();
         }
     }
 
     private void releaseDrag(int x, int y) {
-        int rank = y / SQUARE_SIZE;
-        int file = x / SQUARE_SIZE;
-        int index = Square.toIndex(file, rank);
+        Square square = getSquare(x, y);
 
-        if (dragPiece != Piece.NONE && !isSelected(index) && inMoves(index)) {
-            moveSelectedPiece(index);
+        if (dragPiece != Piece.NONE && !isSelected(square.getIndex()) && inMoves(square.getIndex())) {
+            moveSelectedPiece(square.getIndex());
         }
 
         dragPiece = Piece.NONE;
         hoveringSquare = -1;
+    }
+
+    private Square getSquare(int x, int y) {
+        return new Square(x / SQUARE_SIZE, y / SQUARE_SIZE);
+    }
+
+    private Square getSquare(MouseEvent mouseEvent) {
+        return getSquare(mouseEvent.getX(), mouseEvent.getY());
     }
 
     private void loadPieceImages() {
