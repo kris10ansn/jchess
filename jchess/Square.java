@@ -1,5 +1,7 @@
 package jchess;
 
+import java.awt.Point;
+
 public class Square {
 
     private final int index;
@@ -22,6 +24,18 @@ public class Square {
 
     public int getIndex() {
         return index;
+    }
+
+    public int getX(int squareSize) {
+        return getFile() * squareSize;
+    }
+
+    public int getY(int squareSize) {
+        return getRank() * squareSize;
+    }
+
+    public Point getPoint(int squareSize) {
+        return new Point(getX(squareSize) + squareSize / 2, getY(squareSize) + squareSize / 2);
     }
 
     public long getPositionBitBoard() {
