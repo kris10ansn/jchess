@@ -45,62 +45,38 @@ public class ChessBoardPanel extends JPanel {
 
     private final Point dragPosition = new Point(0, 0);
 
+    private final Board board;
+
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent event) {
+            handleMousePressed(event);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent event) {
+            handleMouseReleased(event);
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent event) {
+            handleMouseDragged(event);
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent event) {
+            handleMouseMoved(event);
+        }
+    };
+
     private int selectedSquare = -1;
     private int hoveringSquare = -1;
     private int dragPiece = Piece.NONE;
-
     private long moveSquares = 0L;
-
-    private final Board board;
 
     public ChessBoardPanel(Board board) {
         this.board = board;
         loadPieceImages();
-
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent event) {
-                Square square = getSquare(event);
-                final int piece = board.getSquare(square.getIndex());
-
-                if (inMoves(square.getIndex())) {
-                    moveSelectedPiece(square.getIndex());
-                } else if (piece == Piece.NONE) {
-                    clearSelection();
-                } else {
-                    selectSquare(square.getIndex());
-                    startDrag(event.getX(), event.getY(), piece);
-                }
-
-                repaint();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent event) {
-                releaseDrag(event.getX(), event.getY());
-                repaint();
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent event) {
-                doDrag(event.getX(), event.getY());
-                repaint();
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent event) {
-                Square square = getSquare(event);
-
-                if (inMoves(square.getIndex())) {
-                    setHovering(square.getIndex());
-                } else {
-                    clearHovering();
-                }
-
-                repaint();
-            }
-        };
-
         addMouseListener(mouseAdapter);
         addMouseMotionListener(mouseAdapter);
     }
@@ -148,7 +124,44 @@ public class ChessBoardPanel extends JPanel {
         if (dragPiece != Piece.NONE) {
             drawPiece(g, dragPiece, dragPosition);
         }
+    }
 
+    private void handleMousePressed(MouseEvent event) {
+        Square square = getSquare(event);
+        final int piece = board.getSquare(square.getIndex());
+
+        if (inMoves(square.getIndex())) {
+            moveSelectedPiece(square.getIndex());
+        } else if (piece == Piece.NONE) {
+            clearSelection();
+        } else {
+            selectSquare(square.getIndex());
+            startDrag(event.getX(), event.getY(), piece);
+        }
+
+        repaint();
+    }
+
+    private void handleMouseReleased(MouseEvent event) {
+        releaseDrag(event.getX(), event.getY());
+        repaint();
+    }
+
+    private void handleMouseDragged(MouseEvent event) {
+        doDrag(event.getX(), event.getY());
+        repaint();
+    }
+
+    private void handleMouseMoved(MouseEvent event) {
+        Square square = getSquare(event);
+
+        if (inMoves(square.getIndex())) {
+            setHovering(square.getIndex());
+        } else {
+            clearHovering();
+        }
+
+        repaint();
     }
 
     private void drawIndicator(Graphics g, String indicator, Square square, boolean topRight) {
