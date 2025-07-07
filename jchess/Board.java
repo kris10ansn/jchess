@@ -35,10 +35,16 @@ public class Board {
         final int piece = board[square];
 
         final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+
         final int direction = isWhite ? -1 : 1;
         final int up = direction * 8;
+        final int down = direction * -8;
+
+        final int file = square % 8;
+        final int rank = square / 8;
 
         final long position = Bits.oneAt(square);
+
         final long allPieces = whitePieces | blackPieces;
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
         final long ownPieces = isWhite ? whitePieces : blackPieces;
@@ -62,6 +68,28 @@ public class Board {
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
             return BitBoard.getKnightMovesMaskedAndShifted(square) & ~ownPieces;
+        }
+
+        if (Piece.isType(piece, Piece.ROOK)) {
+            // TODO: Only horizontal movement checks for blockers
+            long orthogonal = Bits.shift(BitBoard.FILE_1, file)
+                    | Bits.shift(BitBoard.RANK_8, rank * down);
+
+            long moves = orthogonal & ~position & ~ownPieces;
+
+            for (int i = 0; i < 8; i++) {
+                int filePos = rank * 8 + i;
+                boolean fileHasPiece = Bits.getBit(allPieces, filePos);
+
+                if (fileHasPiece && filePos < square) {
+                    moves &= Bits.clearBits(moves, rank * 8, filePos);
+                }
+                if (fileHasPiece && filePos > square) {
+                    moves &= Bits.clearBits(moves, filePos, rank * 8 + 8);
+                }
+            }
+
+            return moves;
         }
 
         return 0L;
