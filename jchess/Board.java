@@ -108,9 +108,16 @@ public class Board {
             throw new IllegalArgumentException("Invalid fen string: " + fen);
         }
 
-        // Piece placement data
+        loadFenPiecePlacement(segments[0]);
+        loadFenActiveColor(segments[1]);
+        loadFenCastlingRights(segments[2]);
+        loadFenEnPassantSquare(segments[3]);
+        loadFenMoveData(segments[4], segments[5]);
+    }
+
+    private void loadFenPiecePlacement(String segment) {
         int pos = 0;
-        for (char c : segments[0].toCharArray()) {
+        for (char c : segment.toCharArray()) {
             if (c == '/') {
                 continue;
             }
@@ -120,26 +127,27 @@ public class Board {
                 setPiece(Piece.fromFenChar(c), pos);
                 pos++;
             }
-
         }
+    }
 
-        // Active color data
-        activeColor = segments[1].equals("w") ? Piece.WHITE : Piece.BLACK;
+    private void loadFenActiveColor(String segment) {
+        activeColor = segment.equals("w") ? Piece.WHITE : Piece.BLACK;
+    }
 
-        // Castling rights data
-        castlingRights.setCastlingRight(Piece.WHITE, true, segments[2].contains("K"));
-        castlingRights.setCastlingRight(Piece.BLACK, true, segments[2].contains("k"));
-        castlingRights.setCastlingRight(Piece.WHITE, false, segments[2].contains("Q"));
-        castlingRights.setCastlingRight(Piece.BLACK, false, segments[2].contains("q"));
+    private void loadFenCastlingRights(String segment) {
+        castlingRights.setCastlingRight(Piece.WHITE, true, segment.contains("K"));
+        castlingRights.setCastlingRight(Piece.BLACK, true, segment.contains("k"));
+        castlingRights.setCastlingRight(Piece.WHITE, false, segment.contains("Q"));
+        castlingRights.setCastlingRight(Piece.BLACK, false, segment.contains("q"));
+    }
 
-        // En passant square data (TODO: Implement)
-        enPassantSquare = segments[3].equals("-") ? null : segments[3];
+    private void loadFenEnPassantSquare(String segment) {
+        enPassantSquare = segment.equals("-") ? null : segment;
+    }
 
-        // Halfmove data
-        fiftyMoveCounter = Integer.parseInt(segments[4]);
-
-        // Fullmove data
-        moveCounter = Integer.parseInt(segments[5]);
+    private void loadFenMoveData(String halfMoveSegment, String fullMoveSegment) {
+        fiftyMoveCounter = Integer.parseInt(halfMoveSegment);
+        moveCounter = Integer.parseInt(fullMoveSegment);
     }
 
     /**
