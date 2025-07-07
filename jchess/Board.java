@@ -31,8 +31,8 @@ public class Board {
         );
     }
 
-    public long generateMovesFor(int square) {
-        final int piece = board[square];
+    public long generateMovesFor(int index) {
+        final int piece = board[index];
 
         final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
 
@@ -40,10 +40,7 @@ public class Board {
         final int up = direction * 8;
         final int down = direction * -8;
 
-        final int file = square % 8;
-        final int rank = square / 8;
-
-        final long position = Bits.oneAt(square);
+        final Square square = new Square(index);
 
         final long allPieces = whitePieces | blackPieces;
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
@@ -54,38 +51,37 @@ public class Board {
                     ? BitBoard.WHITE_STARTING_SQUARES
                     : BitBoard.BLACK_STARTING_SQUARES;
 
-            long singlePush = Bits.shift(position, up) & ~allPieces;
-            long doublePush = Bits.shift(position, 2 * up)
+            long singlePush = Bits.shift(square.getPositionBitBoard(), up) & ~allPieces;
+            long doublePush = Bits.shift(square.getPositionBitBoard(), 2 * up)
                     & Bits.shift(startingSquares, 2 * up)
                     & Bits.shift(singlePush, up)
                     & ~allPieces;
 
-            long attacks = (Bits.oneAt(square + direction * 9)
-                    | Bits.oneAt(square + direction * 7)) & opponentPieces;
+            long attacks = (Bits.oneAt(index + direction * 9)
+                    | Bits.oneAt(index + direction * 7)) & opponentPieces;
 
             return singlePush | doublePush | attacks;
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return BitBoard.getKnightMovesMaskedAndShifted(square) & ~ownPieces;
+            return BitBoard.getKnightMovesMaskedAndShifted(index) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
             // TODO: Only horizontal movement checks for blockers
-            long orthogonal = Bits.shift(BitBoard.FILE_1, file)
-                    | Bits.shift(BitBoard.RANK_8, rank * down);
+            final long horizontal = Bits.shift(BitBoard.RANK_8, square.getRank() * down);
+            final long vertical = Bits.shift(BitBoard.FILE_1, square.getFile());
 
-            long moves = orthogonal & ~position & ~ownPieces;
+            long moves = (vertical | horizontal) & ~square.getPositionBitBoard() & ~ownPieces;
 
             for (int i = 0; i < 8; i++) {
-                int filePos = Square.toIndex(file, rank);
-                boolean fileHasPiece = Bits.getBit(allPieces, filePos);
+                boolean fileHasPiece = Bits.getBit(allPieces, square.getIndex());
 
-                if (fileHasPiece && filePos < square) {
-                    moves &= Bits.clearBits(moves, Square.toIndex(0, rank), filePos);
+                if (fileHasPiece && square.getIndex() < index) {
+                    moves &= Bits.clearBits(moves, Square.toIndex(0, square.getRank()), square.getIndex());
                 }
-                if (fileHasPiece && filePos > square) {
-                    moves &= Bits.clearBits(moves, filePos, Square.toIndex(8, rank));
+                if (fileHasPiece && square.getIndex() > index) {
+                    moves &= Bits.clearBits(moves, square.getIndex(), Square.toIndex(8, square.getRank()));
                 }
             }
 

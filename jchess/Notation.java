@@ -13,9 +13,15 @@ public class Notation {
     }
 
     public static String toNotation(int index) {
-        final int file = index % 8;
-        final int rank = index / 8;
-        
-        return ('a' + file) + String.valueOf(rank);
+        return toNotation(new Square(index));
     }
+
+    public static String toNotation(Square square) {
+        return getFileCharacter(square.getFile()) + String.valueOf(square.getRank());
+    }
+
+    public static String getFileCharacter(int file) {
+        return String.valueOf('a' + file);
+    }
+
 }

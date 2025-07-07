@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import jchess.Bits;
 import jchess.Board;
 import jchess.Move;
+import jchess.Notation;
 import jchess.Piece;
 import jchess.Square;
 
@@ -113,18 +114,16 @@ public class ChessBoardPanel extends JPanel {
         g.setFont(g.getFont().deriveFont((float) fontSize));
 
         for (int i = 0; i < 64; i++) {
-            final int rank = i / 8;
-            final int file = i % 8;
+            final Square square = new Square(i);
 
-            final int squareX = file * SQUARE_SIZE;
-            final int squareY = rank * SQUARE_SIZE;
-
-            final boolean isLightSquare = (i + rank) % 2 == 0;
+            final int squareX = square.getFile() * SQUARE_SIZE;
+            final int squareY = square.getRank() * SQUARE_SIZE;
+            final boolean isLightSquare = (i + square.getRank()) % 2 == 0;
 
             g.setColor(isLightSquare ? COLOR_LIGHT : COLOR_DARK);
             g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
 
-            if (i == selectedSquare || i == hoveringSquare) {
+            if (isHighlighted(i)) {
                 g.setColor(COLOR_HIGHLIGHT);
                 g.fillRect(squareX, squareY, SQUARE_SIZE, SQUARE_SIZE);
             } else if (Bits.getBit(moveSquares, i)) {
@@ -140,7 +139,7 @@ public class ChessBoardPanel extends JPanel {
                 } else {
                     final int holePadding = 10;
 
-                    var square = new Rectangle.Float(
+                    var rect = new Rectangle.Float(
                             squareX, squareY, SQUARE_SIZE, SQUARE_SIZE
                     );
                     var hole = new Ellipse2D.Float(
@@ -148,7 +147,7 @@ public class ChessBoardPanel extends JPanel {
                             SQUARE_SIZE + holePadding * 2, SQUARE_SIZE + holePadding * 2
                     );
 
-                    var clip = new Area(square);
+                    var clip = new Area(rect);
                     clip.subtract(new Area(hole));
 
                     g.setClip(clip);
@@ -157,23 +156,22 @@ public class ChessBoardPanel extends JPanel {
                 }
             }
 
+            // Set opposite color to draw file/rank notation
+            g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+
             // Draw file characters on the lowest rank
-            if (rank == 7) {
-                // Get character by adding the file index to 'a' (0='a', 1='b', ...)
-                final char fileCharacter = (char) ('a' + file);
-                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+            if (square.getRank() == 7) {
                 g.drawString(
-                        String.valueOf(fileCharacter),
+                        Notation.getFileCharacter(square.getFile()),
                         squareX + fontSize / 8,
                         squareY + SQUARE_SIZE - fontSize / 8
                 );
             }
 
             // Draw rank numbers on right-most file
-            if (file == 7) {
-                g.setColor(isLightSquare ? COLOR_DARK : COLOR_LIGHT);
+            if (square.getFile() == 7) {
                 g.drawString(
-                        String.valueOf(8 - rank),
+                        String.valueOf(8 - square.getRank()),
                         squareX + SQUARE_SIZE - fontSize / 2 - fontSize / 8,
                         squareY + fontSize + fontSize / 8
                 );
@@ -195,6 +193,10 @@ public class ChessBoardPanel extends JPanel {
 
     }
 
+    private boolean isHighlighted(int index) {
+        return isSelected(index) || isHovering(index);
+    }
+
     private boolean inMoves(int index) {
         return Bits.overlap(moveSquares, Bits.oneAt(index));
     }
@@ -203,13 +205,12 @@ public class ChessBoardPanel extends JPanel {
         hoveringSquare = index;
     }
 
-    private void clearHovering() {
-        hoveringSquare = -1;
+    private boolean isHovering(int index) {
+        return hoveringSquare == index;
     }
 
-    private void clearSelection() {
-        moveSquares = 0;
-        selectedSquare = -1;
+    private void clearHovering() {
+        hoveringSquare = -1;
     }
 
     private void selectSquare(int index) {
@@ -219,6 +220,11 @@ public class ChessBoardPanel extends JPanel {
 
     private boolean isSelected(int index) {
         return selectedSquare == index;
+    }
+
+    private void clearSelection() {
+        moveSquares = 0;
+        selectedSquare = -1;
     }
 
     private void moveSelectedPiece(int toIndex) {
