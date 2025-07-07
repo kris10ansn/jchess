@@ -8,7 +8,7 @@ public class Board {
     private int activeColor = Piece.WHITE;
     private int moveCounter = 1;
     private int fiftyMoveCounter = 0;
-    private String enPassantSquare = null;
+    private int enPassantSquare = -1;
 
     // Piece placement bitboards
     private long whitePieces = 0;
@@ -78,14 +78,14 @@ public class Board {
             long moves = orthogonal & ~position & ~ownPieces;
 
             for (int i = 0; i < 8; i++) {
-                int filePos = rank * 8 + i;
+                int filePos = Notation.toIndex(file, rank);
                 boolean fileHasPiece = Bits.getBit(allPieces, filePos);
 
                 if (fileHasPiece && filePos < square) {
-                    moves &= Bits.clearBits(moves, rank * 8, filePos);
+                    moves &= Bits.clearBits(moves, Notation.toIndex(0, rank), filePos);
                 }
                 if (fileHasPiece && filePos > square) {
-                    moves &= Bits.clearBits(moves, filePos, rank * 8 + 8);
+                    moves &= Bits.clearBits(moves, filePos, Notation.toIndex(8, rank));
                 }
             }
 
@@ -142,7 +142,7 @@ public class Board {
     }
 
     private void loadFenEnPassantSquare(String segment) {
-        enPassantSquare = segment.equals("-") ? null : segment;
+        enPassantSquare = segment.equals("-") ? -1 : Notation.toIndex(segment);
     }
 
     private void loadFenMoveData(String halfMoveSegment, String fullMoveSegment) {

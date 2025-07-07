@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import jchess.Bits;
 import jchess.Board;
 import jchess.Move;
+import jchess.Notation;
 import jchess.Piece;
 
 public class ChessBoardPanel extends JPanel {
@@ -51,7 +52,7 @@ public class ChessBoardPanel extends JPanel {
                 final int rank = event.getY() / SQUARE_SIZE;
                 final int file = event.getX() / SQUARE_SIZE;
 
-                final int index = rank * 8 + file;
+                final int index = Notation.toIndex(file, rank);
                 final int piece = board.getSquare(index);
 
                 if (Bits.overlap(moveSquares, Bits.oneAt(index))) {
@@ -85,7 +86,7 @@ public class ChessBoardPanel extends JPanel {
                 int rank = event.getY() / SQUARE_SIZE;
                 int file = event.getX() / SQUARE_SIZE;
 
-                int index = rank * 8 + file;
+                int index = Notation.toIndex(file, rank);
 
                 if (dragPiece == Piece.NONE) {
                     return;
@@ -112,7 +113,7 @@ public class ChessBoardPanel extends JPanel {
 
                 int rank = event.getY() / SQUARE_SIZE;
                 int file = event.getX() / SQUARE_SIZE;
-                int index = rank * 8 + file;
+                int index = Notation.toIndex(file, rank);
 
                 hoveringSquare
                         = Bits.overlap(
@@ -128,7 +129,7 @@ public class ChessBoardPanel extends JPanel {
             public void mouseMoved(MouseEvent event) {
                 int rank = event.getY() / SQUARE_SIZE;
                 int file = event.getX() / SQUARE_SIZE;
-                int index = rank * 8 + file;
+                int index = Notation.toIndex(file, rank);
 
                 if (Bits.overlap(moveSquares, Bits.oneAt(index))) {
                     hoveringSquare = index;
