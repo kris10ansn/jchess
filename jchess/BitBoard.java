@@ -20,6 +20,9 @@ public class BitBoard {
     public static final long FILE_7 = FILE_6 << 1L;
     public static final long FILE_8 = FILE_7 << 1L;
 
+    public static final long[] RANKS = new long[]{RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8};
+    public static final long[] FILES = new long[]{FILE_1, FILE_2, FILE_3, FILE_4, FILE_5, FILE_6, FILE_7, FILE_8};
+
     public static final long WHITE_STARTING_SQUARES = RANK_1 | RANK_2;
     public static final long BLACK_STARTING_SQUARES = RANK_7 | RANK_8;
 
