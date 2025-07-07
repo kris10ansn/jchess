@@ -247,6 +247,10 @@ public class Board {
         return board[index];
     }
 
+    public int getSquare(Square square) {
+        return getSquare(square.getIndex());
+    }
+
     private void setPiece(int piece, int pos) {
         final long position = Bits.oneAt(pos);
 
