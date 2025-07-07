@@ -78,14 +78,14 @@ public class Board {
             long moves = orthogonal & ~position & ~ownPieces;
 
             for (int i = 0; i < 8; i++) {
-                int filePos = Notation.toIndex(file, rank);
+                int filePos = Square.toIndex(file, rank);
                 boolean fileHasPiece = Bits.getBit(allPieces, filePos);
 
                 if (fileHasPiece && filePos < square) {
-                    moves &= Bits.clearBits(moves, Notation.toIndex(0, rank), filePos);
+                    moves &= Bits.clearBits(moves, Square.toIndex(0, rank), filePos);
                 }
                 if (fileHasPiece && filePos > square) {
-                    moves &= Bits.clearBits(moves, filePos, Notation.toIndex(8, rank));
+                    moves &= Bits.clearBits(moves, filePos, Square.toIndex(8, rank));
                 }
             }
 
