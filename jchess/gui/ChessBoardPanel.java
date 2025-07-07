@@ -31,6 +31,7 @@ public class ChessBoardPanel extends JPanel {
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
     private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 128);
+    private final Color COLOR_EXTRA_DARK = new Color(0x946F51);
 
     private final int BOARD_SIZE = 1024;
     private final int SQUARE_SIZE = BOARD_SIZE / 8;
@@ -185,7 +186,7 @@ public class ChessBoardPanel extends JPanel {
     private void drawIndicator(Graphics g, String indicator, Square square, boolean topRight) {
         Font font = g.getFont().deriveFont((float) FONT_SIZE).deriveFont(Font.BOLD);
         g.setFont(font);
-        g.setColor(square.isLightSquare() ? COLOR_DARK : COLOR_LIGHT);
+        g.setColor(square.isLightSquare() ? COLOR_EXTRA_DARK : COLOR_LIGHT);
 
         FontMetrics fontMetrics = g.getFontMetrics();
 
