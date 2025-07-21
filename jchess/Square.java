@@ -19,7 +19,7 @@ public class Square {
     }
 
     public int getRank() {
-        return index / 8;
+        return 7 - index / 8;
     }
 
     public int getIndex() {
@@ -31,7 +31,7 @@ public class Square {
     }
 
     public int getY(int squareSize) {
-        return getRank() * squareSize;
+        return (squareSize * 7) - (getRank() * squareSize);
     }
 
     public Point getPoint(int squareSize) {
