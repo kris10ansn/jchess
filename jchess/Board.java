@@ -42,7 +42,7 @@ public class Board {
         final long ownPieces = isWhite ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            final int direction = isWhite ? -1 : 1;
+            final int direction = isWhite ? 1 : -1;
             final int up = direction * 8;
 
             long startingSquares = isWhite
@@ -110,16 +110,20 @@ public class Board {
     }
 
     private void loadFenPiecePlacement(String segment) {
-        int pos = 0;
+        int rank = 7;
+        int file = 0;
+
         for (char c : segment.toCharArray()) {
             if (c == '/') {
+                rank--;
+                file = 0;
                 continue;
             }
             if (Character.isDigit(c)) {
-                pos += Character.getNumericValue(c);
+                file += Character.getNumericValue(c);
             } else {
-                setPiece(Piece.fromFenChar(c), pos);
-                pos++;
+                setPiece(Piece.fromFenChar(c), Square.toIndex(file, rank));
+                file++;
             }
         }
     }

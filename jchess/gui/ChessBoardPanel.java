@@ -109,7 +109,7 @@ public class ChessBoardPanel extends JPanel {
             }
 
             if (square.getFile() == 7) {
-                final String rank = String.valueOf(8 - square.getRank());
+                final String rank = String.valueOf(square.getRank() + 1);
                 drawIndicator(g, rank, square, true);
             }
 
@@ -306,7 +306,7 @@ public class ChessBoardPanel extends JPanel {
     }
 
     private Square getSquare(int x, int y) {
-        return new Square(x / SQUARE_SIZE, y / SQUARE_SIZE);
+        return new Square(x / SQUARE_SIZE, 7 - (y / SQUARE_SIZE));
     }
 
     private Square getSquare(MouseEvent mouseEvent) {

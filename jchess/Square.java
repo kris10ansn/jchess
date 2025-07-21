@@ -19,7 +19,7 @@ public class Square {
     }
 
     public int getRank() {
-        return 7 - index / 8;
+        return index / 8;
     }
 
     public int getIndex() {
@@ -43,7 +43,7 @@ public class Square {
     }
 
     public boolean isLightSquare() {
-        return (index + getRank()) % 2 == 0;
+        return (getRank() + getFile()) % 2 == 1;
     }
 
     public static int toIndex(int file, int rank) {
