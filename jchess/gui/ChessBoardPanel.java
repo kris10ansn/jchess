@@ -171,8 +171,8 @@ public class ChessBoardPanel extends JPanel {
 
         FontMetrics fontMetrics = g.getFontMetrics();
 
-        int x = square.getFile() * SQUARE_SIZE;
-        int y = square.getRank() * SQUARE_SIZE;
+        int x = square.getX(SQUARE_SIZE);
+        int y = square.getY(SQUARE_SIZE);
 
         if (topRight) {
             x += SQUARE_SIZE - fontMetrics.charWidth(indicator.charAt(0)) - FONT_PADDING;
