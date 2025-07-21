@@ -32,21 +32,19 @@ public class Board {
     }
 
     public long generateMovesFor(int index) {
-        final int piece = board[index];
+        final int piece = getPiece(index);
+        final Square square = new Square(index);
 
         final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
-
-        final int direction = isWhite ? -1 : 1;
-        final int up = direction * 8;
-        final int down = direction * -8;
-
-        final Square square = new Square(index);
 
         final long allPieces = whitePieces | blackPieces;
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
         final long ownPieces = isWhite ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
+            final int direction = isWhite ? -1 : 1;
+            final int up = direction * 8;
+
             long startingSquares = isWhite
                     ? BitBoard.WHITE_STARTING_SQUARES
                     : BitBoard.BLACK_STARTING_SQUARES;
@@ -68,27 +66,27 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
-            // TODO: Only horizontal movement checks for blockers
-            final long horizontal = Bits.shift(BitBoard.RANK_8, square.getRank() * down);
-            final long vertical = Bits.shift(BitBoard.FILE_1, square.getFile());
+            final long horizontal = BitBoard.RANKS[square.getRank()];
+            final long vertical = BitBoard.FILES[square.getFile()];
 
-            long moves = (vertical | horizontal) & ~square.getPositionBitBoard() & ~ownPieces;
-
-            for (int i = 0; i < 8; i++) {
-                boolean fileHasPiece = Bits.getBit(allPieces, square.getIndex());
-
-                if (fileHasPiece && square.getIndex() < index) {
-                    moves &= Bits.clearBits(moves, Square.toIndex(0, square.getRank()), square.getIndex());
-                }
-                if (fileHasPiece && square.getIndex() > index) {
-                    moves &= Bits.clearBits(moves, square.getIndex(), Square.toIndex(8, square.getRank()));
-                }
-            }
-
-            return moves;
+            return (vertical | horizontal)
+                    & ~square.getPositionBitBoard()
+                    & ~ownPieces;
         }
 
         return 0L;
+    }
+
+    public boolean squareHasPiece(int index) {
+        return Bits.getBit(whitePieces | blackPieces, index);
+    }
+
+    public boolean squareHasPieceOfColor(int index, int color) {
+        return Piece.isColor(board[index], color);
+    }
+
+    public int getPiece(int index) {
+        return board[index];
     }
 
     /**
