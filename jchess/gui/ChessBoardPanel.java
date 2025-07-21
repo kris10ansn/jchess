@@ -103,7 +103,7 @@ public class ChessBoardPanel extends JPanel {
                 drawMoveHighlight(g, square);
             }
 
-            if (square.getRank() == 7) {
+            if (square.getRank() == 0) {
                 final String file = Notation.getFileCharacter(square.getFile());
                 drawIndicator(g, file, square, false);
             }
