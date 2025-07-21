@@ -49,4 +49,15 @@ public class Square {
     public static int toIndex(int file, int rank) {
         return rank * 8 + file;
     }
+
+    @Override
+    public String toString() {
+        return String.format("""
+            Square {
+                index: %d,
+                rank: %d,
+                file: %d
+            }
+            """, index, getRank(), getFile());
+    }
 }
