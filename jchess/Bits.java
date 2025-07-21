@@ -18,8 +18,12 @@ public class Bits {
         return overlap(l, oneAt(pos));
     }
 
-    public static long setBit(long l, int pos) {
+    public static long putBit(long l, int pos) {
         return l | oneAt(pos);
+    }
+
+    public static long setBit(long l, int pos, boolean value) {
+        return value ? putBit(l, pos) : clearBit(l, pos);
     }
 
     public static long clearBit(long l, int pos) {
