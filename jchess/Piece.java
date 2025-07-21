@@ -52,7 +52,7 @@ public class Piece {
     }
 
     public static char toFenChar(int piece) {
-        char c = switch (piece & 0b00111) {
+        char c = switch (piece & TYPE_MASK) {
             case Piece.KING ->
                 'k';
             case Piece.PAWN ->
