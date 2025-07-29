@@ -66,12 +66,45 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
-            final long horizontal = BitBoard.RANKS[square.getRank()];
-            final long vertical = BitBoard.FILES[square.getFile()];
+            long moves = 0L;
 
-            return (vertical | horizontal)
-                    & ~square.getPositionBitBoard()
-                    & ~ownPieces;
+            for (int r = square.getRank() + 1; r < 8; r++) {
+                int i = Square.toIndex(square.getFile(), r);
+                moves |= Bits.putBit(moves, i);
+
+                if (Bits.getBit(allPieces, i)) {
+                    break;
+                }
+            }
+
+            for (int r = square.getRank() - 1; r >= 0; r--) {
+                int i = Square.toIndex(square.getFile(), r);
+                moves |= Bits.putBit(moves, i);
+
+                if (Bits.getBit(allPieces, i)) {
+                    break;
+                }
+            }
+
+            for (int f = square.getFile() + 1; f < 8; f++) {
+                int i = Square.toIndex(f, square.getRank());
+                moves |= Bits.putBit(moves, i);
+
+                if (Bits.getBit(allPieces, i)) {
+                    break;
+                }
+            }
+
+            for (int f = square.getFile() - 1; f >= 0; f--) {
+                int i = Square.toIndex(f, square.getRank());
+                moves |= Bits.putBit(moves, i);
+
+                if (Bits.getBit(allPieces, i)) {
+                    break;
+                }
+            }
+
+            return moves & ~ownPieces;
         }
 
         return 0L;
