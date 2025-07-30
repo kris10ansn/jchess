@@ -68,46 +68,62 @@ public class Board {
         if (Piece.isType(piece, Piece.ROOK)) {
             long moves = 0L;
 
-            for (int r = square.getRank() + 1; r < 8; r++) {
-                int i = Square.toIndex(square.getFile(), r);
-                moves |= Bits.putBit(moves, i);
+            moves |= generateSlidingMoves(square, 1, 0);
+            moves |= generateSlidingMoves(square, 0, 1);
+            moves |= generateSlidingMoves(square, -1, 0);
+            moves |= generateSlidingMoves(square, 0, -1);
 
-                if (Bits.getBit(allPieces, i)) {
-                    break;
-                }
-            }
+            return moves & ~ownPieces;
+        }
 
-            for (int r = square.getRank() - 1; r >= 0; r--) {
-                int i = Square.toIndex(square.getFile(), r);
-                moves |= Bits.putBit(moves, i);
+        if (Piece.isType(piece, Piece.BISHOP)) {
+            long moves = 0L;
 
-                if (Bits.getBit(allPieces, i)) {
-                    break;
-                }
-            }
-
-            for (int f = square.getFile() + 1; f < 8; f++) {
-                int i = Square.toIndex(f, square.getRank());
-                moves |= Bits.putBit(moves, i);
-
-                if (Bits.getBit(allPieces, i)) {
-                    break;
-                }
-            }
-
-            for (int f = square.getFile() - 1; f >= 0; f--) {
-                int i = Square.toIndex(f, square.getRank());
-                moves |= Bits.putBit(moves, i);
-
-                if (Bits.getBit(allPieces, i)) {
-                    break;
-                }
-            }
+            moves |= generateSlidingMoves(square, 1, 1);
+            moves |= generateSlidingMoves(square, 1, -1);
+            moves |= generateSlidingMoves(square, -1, -1);
+            moves |= generateSlidingMoves(square, -1, 1);
 
             return moves & ~ownPieces;
         }
 
         return 0L;
+    }
+
+    /**
+     * Generates all possible moves for a sliding piece (such as a rook, bishop,
+     * or queen) from a given starting square in a specified direction.
+     *
+     * The method iterates from the starting square in the direction specified
+     * by the rank delta (dr) and file delta (df), adding each reachable square
+     * to the move bitboard until it encounters a piece or the edge of the
+     * board.
+     *
+     * @param fromSquare the starting square of the sliding piece
+     * @param dr the change in rank per step (direction row)
+     * @param df the change in file per step (direction file)
+     * @return a bitboard (long) representing all squares the piece can move to
+     * in the given direction
+     */
+    private long generateSlidingMoves(Square fromSquare, int dr, int df) {
+        long moves = 0L;
+
+        int file = fromSquare.getFile() + df;
+        int rank = fromSquare.getRank() + dr;
+
+        while (0 <= file && file < 8 && 0 <= rank && rank < 8) {
+            int index = Square.toIndex(file, rank);
+            moves |= Bits.putBit(moves, index);
+
+            if (Bits.getBit(getAllPieces(), index)) {
+                break;
+            }
+
+            rank += dr;
+            file += df;
+        }
+
+        return moves;
     }
 
     public boolean squareHasPiece(int index) {
@@ -306,5 +322,9 @@ public class Board {
         blackPieces &= ~position;
 
         board[pos] = Piece.NONE;
+    }
+
+    private long getAllPieces() {
+        return whitePieces | blackPieces;
     }
 }
