@@ -34,30 +34,10 @@ public class Board {
         final int piece = getPiece(index);
         final Square square = new Square(index);
 
-        final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
-
-        final long allPieces = whitePieces | blackPieces;
-        final long opponentPieces = isWhite ? blackPieces : whitePieces;
-        final long ownPieces = isWhite ? whitePieces : blackPieces;
+        final long ownPieces = Piece.isColor(piece, Piece.WHITE) ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
-            final int direction = isWhite ? 1 : -1;
-            final int up = direction * 8;
-
-            long startingSquares = isWhite
-                    ? BitBoard.WHITE_STARTING_SQUARES
-                    : BitBoard.BLACK_STARTING_SQUARES;
-
-            long singlePush = Bits.shift(square.getPositionBitBoard(), up) & ~allPieces;
-            long doublePush = Bits.shift(square.getPositionBitBoard(), 2 * up)
-                    & Bits.shift(startingSquares, 2 * up)
-                    & Bits.shift(singlePush, up)
-                    & ~allPieces;
-
-            long attacks = (Bits.oneAt(index + direction * 9)
-                    | Bits.oneAt(index + direction * 7)) & opponentPieces;
-
-            return singlePush | doublePush | attacks;
+            return generatePawnMoves(square);
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
@@ -129,6 +109,30 @@ public class Board {
                 | generateSlidingMoves(fromSquare, -1, -1)
                 | generateSlidingMoves(fromSquare, -1, 1);
 
+    }
+
+    private long generatePawnMoves(Square fromSquare) {
+        final int piece = getPiece(fromSquare.getIndex());
+        final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+        final long opponentPieces = isWhite ? blackPieces : whitePieces;
+
+        final int direction = isWhite ? 1 : -1;
+        final int up = direction * 8;
+
+        long startingSquares = isWhite
+                ? BitBoard.WHITE_STARTING_SQUARES
+                : BitBoard.BLACK_STARTING_SQUARES;
+
+        long singlePush = Bits.shift(fromSquare.getPositionBitBoard(), up) & ~getAllPieces();
+        long doublePush = Bits.shift(fromSquare.getPositionBitBoard(), 2 * up)
+                & Bits.shift(startingSquares, 2 * up)
+                & Bits.shift(singlePush, up)
+                & ~getAllPieces();
+
+        long attacks = (Bits.oneAt(fromSquare.getIndex() + direction * 9)
+                | Bits.oneAt(fromSquare.getIndex() + direction * 7)) & opponentPieces;
+
+        return singlePush | doublePush | attacks;
     }
 
     public boolean squareHasPiece(int index) {
