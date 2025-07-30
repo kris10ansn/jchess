@@ -28,6 +28,14 @@ public class Piece {
         return (piece & COLOR_MASK) == color;
     }
 
+    public static boolean isWhite(int piece) {
+        return Piece.isColor(piece, Piece.WHITE);
+    }
+
+    public static boolean isBlack(int piece) {
+        return Piece.isColor(piece, Piece.BLACK);
+    }
+
     public static int fromFenChar(char fenChar) {
         int piece = switch (Character.toLowerCase(fenChar)) {
             case 'k' ->

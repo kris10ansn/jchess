@@ -128,7 +128,7 @@ public class ChessBoardPanel extends JPanel {
 
     private void handleMousePressed(MouseEvent event) {
         Square square = getSquare(event);
-        final int piece = board.getSquare(square.getIndex());
+        final int piece = board.getPiece(square.getIndex());
 
         if (inMoves(square.getIndex())) {
             moveSelectedPiece(square.getIndex());
@@ -191,7 +191,7 @@ public class ChessBoardPanel extends JPanel {
         final int x = square.getX(SQUARE_SIZE);
         final int y = square.getY(SQUARE_SIZE);
 
-        if (board.getSquare(square) == Piece.NONE) {
+        if (board.getPiece(square) == Piece.NONE) {
             g.fillOval(
                     x + SQUARE_SIZE / 2 - MOVE_CIRCLE_SIZE / 2,
                     y + SQUARE_SIZE / 2 - MOVE_CIRCLE_SIZE / 2,

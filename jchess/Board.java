@@ -34,7 +34,7 @@ public class Board {
         final int piece = getPiece(index);
         final Square square = new Square(index);
 
-        final long ownPieces = Piece.isColor(piece, Piece.WHITE) ? whitePieces : blackPieces;
+        final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
             return generatePawnMoves(square);
@@ -113,7 +113,7 @@ public class Board {
 
     private long generatePawnMoves(Square fromSquare) {
         final int piece = getPiece(fromSquare.getIndex());
-        final boolean isWhite = Piece.isColor(piece, Piece.WHITE);
+        final boolean isWhite = Piece.isWhite(piece);
         final long opponentPieces = isWhite ? blackPieces : whitePieces;
 
         final int direction = isWhite ? 1 : -1;
@@ -140,11 +140,15 @@ public class Board {
     }
 
     public boolean squareHasPieceOfColor(int index, int color) {
-        return Piece.isColor(board[index], color);
+        return Piece.isColor(getPiece(index), color);
     }
 
     public int getPiece(int index) {
         return board[index];
+    }
+
+    public int getPiece(Square square) {
+        return getPiece(square.getIndex());
     }
 
     /**
@@ -219,7 +223,7 @@ public class Board {
         // Piece placement data
         for (int i = 0; i < board.length; i++) {
             final boolean isRankEnd = i % 8 == 0;
-            final int piece = board[i];
+            final int piece = getPiece(i);
 
             if (empties > 0 && (piece != Piece.NONE || isRankEnd)) {
                 fen += empties;
@@ -230,10 +234,10 @@ public class Board {
                 fen += '/';
             }
 
-            if (board[i] == Piece.NONE) {
+            if (piece == Piece.NONE) {
                 empties++;
             } else {
-                fen += Piece.toFenChar(board[i]);
+                fen += Piece.toFenChar(piece);
             }
         }
 
@@ -286,7 +290,7 @@ public class Board {
                 System.out.println();
             }
 
-            System.out.print(board[i]);
+            System.out.print(getPiece(i));
             System.out.print('\t');
         }
 
@@ -301,14 +305,6 @@ public class Board {
 
     public int[] getBoard() {
         return board;
-    }
-
-    public int getSquare(int index) {
-        return board[index];
-    }
-
-    public int getSquare(Square square) {
-        return getSquare(square.getIndex());
     }
 
     private void setPiece(int piece, int pos) {
