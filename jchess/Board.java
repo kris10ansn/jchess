@@ -19,7 +19,7 @@ public class Board {
             return;
         }
 
-        setPiece(board[move.fromSquare()], move.toSquare());
+        setPiece(getPiece(move.fromSquare()), move.toSquare());
         removePiece(move.fromSquare());
     }
 
