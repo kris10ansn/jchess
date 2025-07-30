@@ -314,19 +314,19 @@ public class ChessBoardPanel extends JPanel {
 
     private void loadPieceImages() {
         try {
-            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wP.png")));
-            pieceImageMap.put(Piece.create(Piece.KING, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wK.png")));
-            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wN.png")));
-            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wB.png")));
-            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wR.png")));
-            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/wQ.png")));
+            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wP.png")));
+            pieceImageMap.put(Piece.create(Piece.KING, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wK.png")));
+            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wN.png")));
+            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wB.png")));
+            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wR.png")));
+            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.WHITE), ImageIO.read(getClass().getResourceAsStream("/pieces/wQ.png")));
 
-            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bP.png")));
-            pieceImageMap.put(Piece.create(Piece.KING, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bK.png")));
-            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bN.png")));
-            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bB.png")));
-            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bR.png")));
-            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/resources/pieces/bQ.png")));
+            pieceImageMap.put(Piece.create(Piece.PAWN, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bP.png")));
+            pieceImageMap.put(Piece.create(Piece.KING, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bK.png")));
+            pieceImageMap.put(Piece.create(Piece.KNIGHT, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bN.png")));
+            pieceImageMap.put(Piece.create(Piece.BISHOP, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bB.png")));
+            pieceImageMap.put(Piece.create(Piece.ROOK, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bR.png")));
+            pieceImageMap.put(Piece.create(Piece.QUEEN, Piece.BLACK), ImageIO.read(getClass().getResourceAsStream("/pieces/bQ.png")));
         } catch (IOException exception) {
             System.out.println(exception);
             System.exit(1);
