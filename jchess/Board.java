@@ -66,25 +66,16 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
-            long moves = 0L;
-
-            moves |= generateSlidingMoves(square, 1, 0);
-            moves |= generateSlidingMoves(square, 0, 1);
-            moves |= generateSlidingMoves(square, -1, 0);
-            moves |= generateSlidingMoves(square, 0, -1);
-
-            return moves & ~ownPieces;
+            return generateRookMoves(square) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.BISHOP)) {
-            long moves = 0L;
+            return generateBishopMoves(square) & ~ownPieces;
+        }
 
-            moves |= generateSlidingMoves(square, 1, 1);
-            moves |= generateSlidingMoves(square, 1, -1);
-            moves |= generateSlidingMoves(square, -1, -1);
-            moves |= generateSlidingMoves(square, -1, 1);
-
-            return moves & ~ownPieces;
+        if (Piece.isType(piece, Piece.QUEEN)) {
+            return (generateRookMoves(square) | generateBishopMoves(square))
+                    & ~ownPieces;
         }
 
         return 0L;
@@ -124,6 +115,21 @@ public class Board {
         }
 
         return moves;
+    }
+
+    private long generateRookMoves(Square fromSquare) {
+        return generateSlidingMoves(fromSquare, 1, 0)
+                | generateSlidingMoves(fromSquare, 0, 1)
+                | generateSlidingMoves(fromSquare, -1, 0)
+                | generateSlidingMoves(fromSquare, 0, -1);
+    }
+
+    private long generateBishopMoves(Square fromSquare) {
+        return generateSlidingMoves(fromSquare, 1, 1)
+                | generateSlidingMoves(fromSquare, 1, -1)
+                | generateSlidingMoves(fromSquare, -1, -1)
+                | generateSlidingMoves(fromSquare, -1, 1);
+
     }
 
     public boolean squareHasPiece(int index) {
