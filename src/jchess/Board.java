@@ -223,7 +223,7 @@ public class Board {
         // Piece placement data
         for (int i = 0; i < board.length; i++) {
             final boolean isRankEnd = i % 8 == 0;
-            final int piece = getPiece(i);
+            final int piece = getPiece(63 - i);
 
             if (empties > 0 && (piece != Piece.NONE || isRankEnd)) {
                 fen += empties;
