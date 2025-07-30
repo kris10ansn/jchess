@@ -10,9 +10,8 @@ public class Board {
     private int fiftyMoveCounter = 0;
     private int enPassantSquare = -1;
 
-    // Piece placement bitboards
-    private long whitePieces = 0;
-    private long blackPieces = 0;
+    private long whitePieces = 0L;
+    private long blackPieces = 0L;
 
     public void makeMove(Move move) {
         if (!isLegalMove(move)) {
