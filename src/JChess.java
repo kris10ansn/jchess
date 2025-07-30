@@ -15,7 +15,7 @@ public class JChess {
         board.loadFen(fen);
         board.debugPrint();
 
-        System.out.println("FEN: " + fen);
+        System.out.println("Provided FEN: " + fen);
 
         SwingUtilities.invokeLater(() -> createWindow());
     }
