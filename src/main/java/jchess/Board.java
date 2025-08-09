@@ -60,20 +60,18 @@ public class Board {
         if (Piece.isType(piece, Piece.KING)) {
             long moves = MoveHelper.getShiftedKingMovesMask(index);
 
-            if (Piece.isWhite(piece) && !Bits.overlap(MoveHelper.WHITE_SHORT_CASTLE_PATH, getAllPieces())) {
-                moves |= new Square(6, 0).getPositionBitBoard();
+            boolean canCastleShort = castlingRights.hasCastlingRight(piece, true);
+            boolean canCastleLong = castlingRights.hasCastlingRight(piece, false);
+
+            long shortCastlePath = MoveHelper.getShortCastlePath(piece);
+            long longCastlePath = MoveHelper.getLongCastlePath(piece);
+
+            if (canCastleShort && !Bits.overlap(getAllPieces(), shortCastlePath)) {
+                moves |= new Square(6, square.getRank()).getPositionBitBoard();
             }
 
-            if (Piece.isWhite(piece) && !Bits.overlap(MoveHelper.WHITE_LONG_CASTLE_PATH, getAllPieces())) {
-                moves |= new Square(2, 0).getPositionBitBoard();
-            }
-
-            if (Piece.isBlack(piece) && !Bits.overlap(MoveHelper.BLACK_SHORT_CASTLE_PATH, getAllPieces())) {
-                moves |= new Square(6, 7).getPositionBitBoard();
-            }
-
-            if (Piece.isBlack(piece) && !Bits.overlap(MoveHelper.BLACK_LONG_CASTLE_PATH, getAllPieces())) {
-                moves |= new Square(2, 7).getPositionBitBoard();
+            if (canCastleLong && !Bits.overlap(getAllPieces(), longCastlePath)) {
+                moves |= new Square(2, square.getRank()).getPositionBitBoard();
             }
 
             return moves & ~ownPieces;

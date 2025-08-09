@@ -57,4 +57,12 @@ public class MoveHelper {
 
         return Bits.shift(mask, index - new Square(1, 1).getIndex());
     }
+
+    public static long getShortCastlePath(int piece) {
+        return Piece.isWhite(piece) ? WHITE_SHORT_CASTLE_PATH : BLACK_SHORT_CASTLE_PATH;
+    }
+
+    public static long getLongCastlePath(int piece) {
+        return Piece.isWhite(piece) ? WHITE_LONG_CASTLE_PATH : BLACK_LONG_CASTLE_PATH;
+    }
 }
