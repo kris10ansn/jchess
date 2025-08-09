@@ -1,6 +1,7 @@
 package jchess;
 
 import java.awt.Point;
+import java.util.Objects;
 
 public class Square {
 
@@ -59,5 +60,15 @@ public class Square {
                 file: %d
             }
             """, index, getRank(), getFile());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Square) && obj.hashCode() == hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(index);
     }
 }
