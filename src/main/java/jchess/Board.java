@@ -19,14 +19,14 @@ public class Board {
             return;
         }
 
-        setPiece(getPiece(move.fromSquare()), move.toSquare());
-        removePiece(move.fromSquare());
+        setPiece(getPiece(move.fromIndex()), move.toIndex());
+        removePiece(move.fromIndex());
     }
 
     public boolean isLegalMove(Move move) {
         return Bits.overlap(
-                generateMovesFor(move.fromSquare()),
-                (Bits.oneAt(move.toSquare()))
+                generateMovesFor(move.fromIndex()),
+                (Bits.oneAt(move.toIndex()))
         );
     }
 
