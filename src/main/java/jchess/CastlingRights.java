@@ -10,7 +10,7 @@ public class CastlingRights {
     private final int QUEEN_MASK = 0b1010;
 
     private int getMask(int color, boolean kingside) {
-        return (color == Piece.WHITE ? WHITE_MASK : BLACK_MASK) & (kingside ? KINGS_MASK : QUEEN_MASK);
+        return (Piece.isWhite(color) ? WHITE_MASK : BLACK_MASK) & (kingside ? KINGS_MASK : QUEEN_MASK);
     }
 
     public void setCastlingRight(int color, boolean kingside, boolean canCastle) {
