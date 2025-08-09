@@ -19,19 +19,49 @@ public class Board {
             return;
         }
 
+        if (isCastlingMove(move)) {
+            handleCastlingMove(move);
+        }
+
+        updateCastlingRights(move);
+
+        movePiece(move.fromSquare(), move.toSquare());
+    }
+
+    public boolean isLegalMove(Move move) {
+        return Bits.overlap(
+                generateMovesFor(move.fromSquare()),
+                move.toSquare().getPositionBitBoard()
+        );
+    }
+
+    public boolean isCastlingMove(Move move) {
+        return Piece.isType(getPiece(move.fromSquare()), Piece.KING)
+                && move.getRankDelta() == 0
+                && Math.abs(move.getFileDelta()) > 1;
+    }
+
+    public void handleCastlingMove(Move move) {
         final int piece = getPiece(move.fromSquare());
         final int backrank = getBackrankIndex(piece);
-
-        final Square kRookStartingSquare = new Square(7, backrank);
-        final Square qRookStartingSquare = new Square(0, backrank);
 
         boolean isKingOnBackRank = Piece.isType(piece, Piece.KING)
                 && move.fromSquare().getRank() == backrank;
 
-        final boolean isKingsideCastleMove = isKingOnBackRank && move.getFileDelta() == 2;
-        final boolean isQueensideCastleMove = isKingOnBackRank && move.getFileDelta() == -2;
+        if (isKingOnBackRank && move.getFileDelta() == 2) {
+            movePiece(getKingRookStartingSquare(piece), new Square(5, backrank));
+        }
 
-        // UPDATE CASTLING RIGHTS
+        if (isKingOnBackRank && move.getFileDelta() == -2) {
+            movePiece(getQueenRookStartingSquare(piece), new Square(3, backrank));
+        }
+    }
+
+    private void updateCastlingRights(Move move) {
+        final int piece = getPiece(move.fromSquare());
+        final Square kRookStartingSquare = getKingRookStartingSquare(piece);
+        final Square qRookStartingSquare = getQueenRookStartingSquare(piece);
+
         if (Piece.isType(piece, Piece.KING)) {
             castlingRights.removeKingsideCastlingRight(piece);
             castlingRights.removeQueensideCastlingRight(piece);
@@ -44,29 +74,7 @@ public class Board {
         if (move.fromSquare().equals(qRookStartingSquare) || move.toSquare().equals(qRookStartingSquare)) {
             castlingRights.removeQueensideCastlingRight(piece);
         }
-        //
-
-        movePiece(move.fromSquare(), move.toSquare());
-
-        if (isKingsideCastleMove) {
-            movePiece(kRookStartingSquare.getIndex(), Square.toIndex(5, backrank));
-        }
-
-        if (isQueensideCastleMove) {
-            movePiece(qRookStartingSquare.getIndex(), Square.toIndex(3, backrank));
-        }
     }
-
-    public boolean isLegalMove(Move move) {
-        return Bits.overlap(
-                generateMovesFor(move.fromSquare().getIndex()),
-                move.toSquare().getPositionBitBoard()
-        );
-    }
-
-    public long generateMovesFor(int index) {
-        final int piece = getPiece(index);
-        final Square square = new Square(index);
 
         final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
 
