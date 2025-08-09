@@ -20,24 +20,45 @@ public class Board {
         }
 
         final int piece = getPiece(move.fromIndex());
-        final Square fromSquare = new Square(move.fromIndex());
+        final int backrank = getBackrankIndex(piece);
 
+        final Square fromSquare = new Square(move.fromIndex());
+        final Square toSquare = new Square(move.toIndex());
+
+        final Square kRookStartingSquare = new Square(7, backrank);
+        final Square qRookStartingSquare = new Square(0, backrank);
+
+        int fileDelta = toSquare.getFile() - fromSquare.getFile();
+        boolean isKingOnBackRank = Piece.isType(piece, Piece.KING)
+                && fromSquare.getRank() == backrank;
+
+        final boolean isKingsideCastleMove = isKingOnBackRank && fileDelta == 2;
+        final boolean isQueensideCastleMove = isKingOnBackRank && fileDelta == -2;
+
+        // UPDATE CASTLING RIGHTS
         if (Piece.isType(piece, Piece.KING)) {
             castlingRights.removeKingsideCastlingRight(piece);
             castlingRights.removeQueensideCastlingRight(piece);
         }
 
-        if (castlingRights.hasKingsideCastlingRight(piece)
-                && fromSquare.equals(getKingsideRookStartingSquare(piece))) {
+        if (fromSquare.equals(kRookStartingSquare) || toSquare.equals(kRookStartingSquare)) {
             castlingRights.removeKingsideCastlingRight(piece);
         }
-        if (castlingRights.hasQueensideCastlingRight(piece)
-                && fromSquare.equals(getQueensideRookStartingSquare(piece))) {
+
+        if (fromSquare.equals(qRookStartingSquare) || toSquare.equals(qRookStartingSquare)) {
             castlingRights.removeQueensideCastlingRight(piece);
         }
+        //
 
-        setPiece(piece, move.toIndex());
-        removePiece(move.fromIndex());
+        movePiece(move.fromIndex(), move.toIndex());
+
+        if (isKingsideCastleMove) {
+            movePiece(kRookStartingSquare.getIndex(), Square.toIndex(5, backrank));
+        }
+
+        if (isQueensideCastleMove) {
+            movePiece(qRookStartingSquare.getIndex(), Square.toIndex(3, backrank));
+        }
     }
 
     public boolean isLegalMove(Move move) {
@@ -366,15 +387,16 @@ public class Board {
         board[pos] = Piece.NONE;
     }
 
+    private void movePiece(int fromIndex, int toIndex) {
+        setPiece(getPiece(fromIndex), toIndex);
+        removePiece(fromIndex);
+    }
+
     private long getAllPieces() {
         return whitePieces | blackPieces;
     }
 
-    private Square getKingsideRookStartingSquare(int piece) {
-        return Piece.isWhite(piece) ? new Square(7, 0) : new Square(7, 7);
-    }
-
-    private Square getQueensideRookStartingSquare(int piece) {
-        return Piece.isWhite(piece) ? new Square(0, 0) : new Square(0, 7);
+    private int getBackrankIndex(int piece) {
+        return Piece.isWhite(piece) ? 0 : 7;
     }
 }
