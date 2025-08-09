@@ -23,9 +23,29 @@ public class CastlingRights {
         }
     }
 
+    public void removeCastlingRight(int color, boolean kingside) {
+        setCastlingRight(color, kingside, false);
+    }
+
+    public void removeKingsideCastlingRight(int color) {
+        removeCastlingRight(color, true);
+    }
+
+    public void removeQueensideCastlingRight(int color) {
+        removeCastlingRight(color, false);
+    }
+
     public boolean hasCastlingRight(int color, boolean kingside) {
         final int mask = getMask(color, kingside);
         return Bits.overlap(castlingRights, mask);
+    }
+
+    public boolean hasKingsideCastlingRight(int color) {
+        return hasCastlingRight(color, true);
+    }
+
+    public boolean hasQueensideCastlingRight(int color) {
+        return hasCastlingRight(color, false);
     }
 
     public String toFenString() {

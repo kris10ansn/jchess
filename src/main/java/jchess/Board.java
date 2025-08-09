@@ -23,17 +23,17 @@ public class Board {
         final Square fromSquare = new Square(move.fromIndex());
 
         if (Piece.isType(piece, Piece.KING)) {
-            castlingRights.setCastlingRight(piece, true, false);
-            castlingRights.setCastlingRight(piece, false, false);
+            castlingRights.removeKingsideCastlingRight(piece);
+            castlingRights.removeQueensideCastlingRight(piece);
         }
 
-        if (castlingRights.hasCastlingRight(piece, true)
+        if (castlingRights.hasKingsideCastlingRight(piece)
                 && fromSquare.equals(MoveHelper.getKingsideRookStartingSquare(piece))) {
-            castlingRights.setCastlingRight(piece, true, false);
+            castlingRights.removeKingsideCastlingRight(piece);
         }
-        if (castlingRights.hasCastlingRight(piece, false)
+        if (castlingRights.hasQueensideCastlingRight(piece)
                 && fromSquare.equals(MoveHelper.getQueensideRookStartingSquare(piece))) {
-            castlingRights.setCastlingRight(piece, false, false);
+            castlingRights.removeQueensideCastlingRight(piece);
         }
 
         setPiece(piece, move.toIndex());
