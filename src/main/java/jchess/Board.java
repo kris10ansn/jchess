@@ -19,7 +19,24 @@ public class Board {
             return;
         }
 
-        setPiece(getPiece(move.fromIndex()), move.toIndex());
+        final int piece = getPiece(move.fromIndex());
+        final Square fromSquare = new Square(move.fromIndex());
+
+        if (Piece.isType(piece, Piece.KING)) {
+            castlingRights.setCastlingRight(piece, true, false);
+            castlingRights.setCastlingRight(piece, false, false);
+        }
+
+        if (castlingRights.hasCastlingRight(piece, true)
+                && fromSquare.equals(MoveHelper.getKingsideRookStartingSquare(piece))) {
+            castlingRights.setCastlingRight(piece, true, false);
+        }
+        if (castlingRights.hasCastlingRight(piece, false)
+                && fromSquare.equals(MoveHelper.getQueensideRookStartingSquare(piece))) {
+            castlingRights.setCastlingRight(piece, false, false);
+        }
+
+        setPiece(piece, move.toIndex());
         removePiece(move.fromIndex());
     }
 
