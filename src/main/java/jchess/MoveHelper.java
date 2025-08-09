@@ -3,7 +3,7 @@ package jchess;
 public class MoveHelper {
 
     private static final long KNIGHT_MOVES = 0b01010000_10001000_00000000_10001000_01010000_00000000_00000000_00000000L;
-    public static final long KING_MOVES = 0b00000000_00000000_00000000_00000000_00000000_00000111_00000101_00000111L;
+    private static final long KING_MOVES = 0b00000000_00000000_00000000_00000000_00000000_00000111_00000101_00000111L;
 
     public static long getShiftedKnightMovesMask(int index) {
         Square square = new Square(index);
