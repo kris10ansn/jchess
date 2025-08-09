@@ -57,6 +57,10 @@ public class Board {
                     & ~ownPieces;
         }
 
+        if (Piece.isType(piece, Piece.KING)) {
+            return MoveHelper.getShiftedKingMovesMask(index) & ~ownPieces;
+        }
+
         return 0L;
     }
 
