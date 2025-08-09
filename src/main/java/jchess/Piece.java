@@ -25,7 +25,7 @@ public class Piece {
     }
 
     public static boolean isColor(int piece, int color) {
-        return (piece & COLOR_MASK) == color;
+        return getColor(piece) == color;
     }
 
     public static boolean isWhite(int piece) {
@@ -34,6 +34,10 @@ public class Piece {
 
     public static boolean isBlack(int piece) {
         return Piece.isColor(piece, Piece.BLACK);
+    }
+
+    public static int getColor(int piece) {
+        return piece & COLOR_MASK;
     }
 
     public static int fromFenChar(char fenChar) {
