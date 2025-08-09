@@ -1,4 +1,7 @@
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -23,9 +26,11 @@ public class JChess {
 
     private static void createWindow() {
         JFrame frame = new JFrame("JChess");
+        frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setBackground(Color.GRAY);
 
-        frame.add(new ChessBoardPanel(board));
+        frame.add(new ChessBoardPanel(board), BorderLayout.WEST);
         frame.pack();
 
         // Center window on screen
