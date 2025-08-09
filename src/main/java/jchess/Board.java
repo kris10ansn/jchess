@@ -58,7 +58,25 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.KING)) {
-            return MoveHelper.getShiftedKingMovesMask(index) & ~ownPieces;
+            long moves = MoveHelper.getShiftedKingMovesMask(index);
+
+            if (Piece.isWhite(piece) && !Bits.overlap(MoveHelper.WHITE_SHORT_CASTLE_PATH, getAllPieces())) {
+                moves |= new Square(6, 0).getPositionBitBoard();
+            }
+
+            if (Piece.isWhite(piece) && !Bits.overlap(MoveHelper.WHITE_LONG_CASTLE_PATH, getAllPieces())) {
+                moves |= new Square(2, 0).getPositionBitBoard();
+            }
+
+            if (Piece.isBlack(piece) && !Bits.overlap(MoveHelper.BLACK_SHORT_CASTLE_PATH, getAllPieces())) {
+                moves |= new Square(6, 7).getPositionBitBoard();
+            }
+
+            if (Piece.isBlack(piece) && !Bits.overlap(MoveHelper.BLACK_LONG_CASTLE_PATH, getAllPieces())) {
+                moves |= new Square(2, 7).getPositionBitBoard();
+            }
+
+            return moves & ~ownPieces;
         }
 
         return 0L;
