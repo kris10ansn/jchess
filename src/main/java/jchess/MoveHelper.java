@@ -8,28 +8,28 @@ public class MoveHelper {
     public static long getShiftedKnightMovesMask(int index) {
         Square square = new Square(index);
 
-        long masked = KNIGHT_MOVES;
+        long mask = KNIGHT_MOVES;
 
         if (square.getRank() >= 7) {
-            masked &= ~BitBoard.RANK_1;
+            mask &= ~BitBoard.RANK_1;
         }
         if (square.getRank() >= 6) {
-            masked &= ~BitBoard.RANK_2;
+            mask &= ~BitBoard.RANK_2;
         }
         if (square.getFile() >= 7) {
-            masked &= ~BitBoard.FILE_7;
+            mask &= ~BitBoard.FILE_7;
         }
         if (square.getFile() >= 6) {
-            masked &= ~BitBoard.FILE_8;
+            mask &= ~BitBoard.FILE_8;
         }
         if (square.getFile() <= 1) {
-            masked &= ~BitBoard.FILE_4;
+            mask &= ~BitBoard.FILE_4;
         }
         if (square.getFile() <= 0) {
-            masked &= ~BitBoard.FILE_5;
+            mask &= ~BitBoard.FILE_5;
         }
 
-        return Bits.shift(masked, index - new Square(5, 5).getIndex());
+        return Bits.shift(mask, index - new Square(5, 5).getIndex());
     }
 
     public static long getShiftedKingMovesMask(int index) {
