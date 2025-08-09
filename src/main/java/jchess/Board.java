@@ -41,7 +41,7 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return MoveHelper.getKnightMovesMaskedAndShifted(index) & ~ownPieces;
+            return MoveHelper.getShiftedKnightMovesMask(index) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {

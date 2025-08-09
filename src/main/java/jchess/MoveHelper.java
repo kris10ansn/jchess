@@ -4,7 +4,7 @@ public class MoveHelper {
 
     private static final long KNIGHT_MOVES = 0b01010000_10001000_00000000_10001000_01010000_00000000_00000000_00000000L;
 
-    public static long getKnightMovesMaskedAndShifted(int position) {
+    public static long getShiftedKnightMovesMask(int position) {
         final int file = position % 8;
         final int rank = position / 8;
 
