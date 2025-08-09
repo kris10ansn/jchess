@@ -15,8 +15,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
 import jchess.Bits;
 import jchess.Board;
 import jchess.Move;
