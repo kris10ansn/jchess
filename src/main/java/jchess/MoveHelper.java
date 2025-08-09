@@ -66,11 +66,4 @@ public class MoveHelper {
         return Piece.isWhite(piece) ? WHITE_LONG_CASTLE_PATH : BLACK_LONG_CASTLE_PATH;
     }
 
-    public static Square getKingsideRookStartingSquare(int piece) {
-        return Piece.isWhite(piece) ? new Square(7, 0) : new Square(7, 7);
-    }
-
-    public static Square getQueensideRookStartingSquare(int piece) {
-        return Piece.isWhite(piece) ? new Square(0, 0) : new Square(0, 7);
-    }
 }

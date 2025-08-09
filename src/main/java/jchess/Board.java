@@ -28,11 +28,11 @@ public class Board {
         }
 
         if (castlingRights.hasKingsideCastlingRight(piece)
-                && fromSquare.equals(MoveHelper.getKingsideRookStartingSquare(piece))) {
+                && fromSquare.equals(getKingsideRookStartingSquare(piece))) {
             castlingRights.removeKingsideCastlingRight(piece);
         }
         if (castlingRights.hasQueensideCastlingRight(piece)
-                && fromSquare.equals(MoveHelper.getQueensideRookStartingSquare(piece))) {
+                && fromSquare.equals(getQueensideRookStartingSquare(piece))) {
             castlingRights.removeQueensideCastlingRight(piece);
         }
 
@@ -368,5 +368,13 @@ public class Board {
 
     private long getAllPieces() {
         return whitePieces | blackPieces;
+    }
+
+    private Square getKingsideRookStartingSquare(int piece) {
+        return Piece.isWhite(piece) ? new Square(7, 0) : new Square(7, 7);
+    }
+
+    private Square getQueensideRookStartingSquare(int piece) {
+        return Piece.isWhite(piece) ? new Square(0, 0) : new Square(0, 7);
     }
 }
