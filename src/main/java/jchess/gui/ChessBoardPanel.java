@@ -261,7 +261,7 @@ public class ChessBoardPanel extends JPanel {
 
     private void selectSquare(int index) {
         selectedSquare = index;
-        moveSquares = board.generateMovesFor(selectedSquare);
+        moveSquares = board.generateMovesFor(new Square(selectedSquare));
     }
 
     private boolean isSelected(int index) {

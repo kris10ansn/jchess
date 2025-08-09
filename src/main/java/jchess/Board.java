@@ -76,6 +76,9 @@ public class Board {
         }
     }
 
+    public long generateMovesFor(Square square) {
+        final int piece = getPiece(square);
+
         final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
 
         if (Piece.isType(piece, Piece.PAWN)) {
@@ -83,7 +86,7 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return MoveHelper.getShiftedKnightMovesMask(index) & ~ownPieces;
+            return MoveHelper.getShiftedKnightMovesMask(square.getIndex()) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
@@ -100,7 +103,7 @@ public class Board {
         }
 
         if (Piece.isType(piece, Piece.KING)) {
-            long moves = MoveHelper.getShiftedKingMovesMask(index);
+            long moves = MoveHelper.getShiftedKingMovesMask(square.getIndex());
 
             boolean canCastleShort = castlingRights.hasCastlingRight(piece, true);
             boolean canCastleLong = castlingRights.hasCastlingRight(piece, false);
@@ -406,5 +409,13 @@ public class Board {
 
     private int getBackrankIndex(int piece) {
         return Piece.isWhite(piece) ? 0 : 7;
+    }
+
+    private Square getKingRookStartingSquare(int color) {
+        return new Square(7, getBackrankIndex(color));
+    }
+
+    private Square getQueenRookStartingSquare(int color) {
+        return new Square(7, getBackrankIndex(color));
     }
 }
