@@ -1,5 +1,12 @@
 package jchess;
 
-public record Move(int fromIndex, int toIndex) {
+public record Move(Square fromSquare, Square toSquare) {
 
+    public int getFileDelta() {
+        return toSquare.getFile() - fromSquare.getFile();
+    }
+
+    public int getRankDelta() {
+        return toSquare.getRank() - fromSquare.getRank();
+    }
 }

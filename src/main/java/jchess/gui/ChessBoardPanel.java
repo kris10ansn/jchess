@@ -274,7 +274,7 @@ public class ChessBoardPanel extends JPanel {
     }
 
     private void moveSelectedPiece(int toIndex) {
-        board.makeMove(new Move(selectedSquare, toIndex));
+        board.makeMove(new Move(new Square(selectedSquare), new Square(toIndex)));
         clearSelection();
         clearHovering();
     }

@@ -19,21 +19,17 @@ public class Board {
             return;
         }
 
-        final int piece = getPiece(move.fromIndex());
+        final int piece = getPiece(move.fromSquare());
         final int backrank = getBackrankIndex(piece);
-
-        final Square fromSquare = new Square(move.fromIndex());
-        final Square toSquare = new Square(move.toIndex());
 
         final Square kRookStartingSquare = new Square(7, backrank);
         final Square qRookStartingSquare = new Square(0, backrank);
 
-        int fileDelta = toSquare.getFile() - fromSquare.getFile();
         boolean isKingOnBackRank = Piece.isType(piece, Piece.KING)
-                && fromSquare.getRank() == backrank;
+                && move.fromSquare().getRank() == backrank;
 
-        final boolean isKingsideCastleMove = isKingOnBackRank && fileDelta == 2;
-        final boolean isQueensideCastleMove = isKingOnBackRank && fileDelta == -2;
+        final boolean isKingsideCastleMove = isKingOnBackRank && move.getFileDelta() == 2;
+        final boolean isQueensideCastleMove = isKingOnBackRank && move.getFileDelta() == -2;
 
         // UPDATE CASTLING RIGHTS
         if (Piece.isType(piece, Piece.KING)) {
@@ -41,16 +37,16 @@ public class Board {
             castlingRights.removeQueensideCastlingRight(piece);
         }
 
-        if (fromSquare.equals(kRookStartingSquare) || toSquare.equals(kRookStartingSquare)) {
+        if (move.fromSquare().equals(kRookStartingSquare) || move.toSquare().equals(kRookStartingSquare)) {
             castlingRights.removeKingsideCastlingRight(piece);
         }
 
-        if (fromSquare.equals(qRookStartingSquare) || toSquare.equals(qRookStartingSquare)) {
+        if (move.fromSquare().equals(qRookStartingSquare) || move.toSquare().equals(qRookStartingSquare)) {
             castlingRights.removeQueensideCastlingRight(piece);
         }
         //
 
-        movePiece(move.fromIndex(), move.toIndex());
+        movePiece(move.fromSquare(), move.toSquare());
 
         if (isKingsideCastleMove) {
             movePiece(kRookStartingSquare.getIndex(), Square.toIndex(5, backrank));
@@ -63,8 +59,8 @@ public class Board {
 
     public boolean isLegalMove(Move move) {
         return Bits.overlap(
-                generateMovesFor(move.fromIndex()),
-                (Bits.oneAt(move.toIndex()))
+                generateMovesFor(move.fromSquare().getIndex()),
+                move.toSquare().getPositionBitBoard()
         );
     }
 
@@ -390,6 +386,10 @@ public class Board {
     private void movePiece(int fromIndex, int toIndex) {
         setPiece(getPiece(fromIndex), toIndex);
         removePiece(fromIndex);
+    }
+
+    private void movePiece(Square fromSquare, Square toSquare) {
+        movePiece(fromSquare.getIndex(), toSquare.getIndex());
     }
 
     private long getAllPieces() {
