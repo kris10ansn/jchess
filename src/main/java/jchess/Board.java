@@ -19,10 +19,7 @@ public class Board {
             return;
         }
 
-        if (isCastlingMove(move)) {
-            handleCastlingMove(move);
-        }
-
+        handleCastlingMove(move);
         handleEnPassantMove(move);
 
         updateCastlingRights(move);
@@ -51,6 +48,10 @@ public class Board {
     }
 
     public void handleCastlingMove(Move move) {
+        if (!isCastlingMove(move)) {
+            return;
+        }
+
         final int piece = getPiece(move.fromSquare());
         final int backrank = getBackrankIndex(piece);
 
