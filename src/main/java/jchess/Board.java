@@ -8,7 +8,7 @@ public class Board {
     public int activeColor = Piece.WHITE;
     private int moveCounter = 1;
     private int fiftyMoveCounter = 0;
-    private int enPassantSquare = -1;
+    private Square enPassantSquare = new Square(-1);
 
     private long whitePieces = 0L;
     private long blackPieces = 0L;
@@ -23,7 +23,10 @@ public class Board {
             handleCastlingMove(move);
         }
 
+        handleEnPassantMove(move);
+
         updateCastlingRights(move);
+        updateEnPassantSquare(move);
 
         movePiece(move.fromSquare(), move.toSquare());
 
@@ -79,6 +82,39 @@ public class Board {
 
         if (move.fromSquare().equals(qRookStartingSquare) || move.toSquare().equals(qRookStartingSquare)) {
             castlingRights.removeQueensideCastlingRight(piece);
+        }
+    }
+
+    private boolean isEnPassantMove(Move move) {
+        if (!Piece.isType(getPiece(move.fromSquare()), Piece.PAWN)) {
+            return false;
+        }
+
+        if (Math.abs(move.getRankDelta()) != 1 || Math.abs(move.getFileDelta()) != 1) {
+            return false;
+        }
+
+        return Piece.isType(getPiece(move.toSquare()), Piece.NONE);
+    }
+
+    private void handleEnPassantMove(Move move) {
+        if (!isEnPassantMove(move)) {
+            return;
+        }
+
+        Square captureSquare = move.toSquare().minus(0, move.getRankDelta());
+        removePiece(captureSquare);
+    }
+
+    private void updateEnPassantSquare(Move move) {
+        final int dr = move.getRankDelta();
+        final int movedPiece = getPiece(move.fromSquare());
+        final boolean isPawn = Piece.isType(movedPiece, Piece.PAWN);
+
+        if (isPawn && Math.abs(dr) == 2) {
+            enPassantSquare.set(move.fromSquare().plus(0, dr / 2));
+        } else {
+            enPassantSquare.set(-1);
         }
     }
 
@@ -185,7 +221,11 @@ public class Board {
     private long generatePawnMoves(Square fromSquare) {
         final int piece = getPiece(fromSquare.getIndex());
         final boolean isWhite = Piece.isWhite(piece);
-        final long opponentPieces = isWhite ? blackPieces : whitePieces;
+        long opponentPieces = isWhite ? blackPieces : whitePieces;
+
+        if (enPassantSquare.getIndex() != -1) {
+            opponentPieces |= enPassantSquare.getPositionBitBoard();
+        }
 
         final int direction = isWhite ? 1 : -1;
         final int up = direction * 8;
@@ -273,7 +313,7 @@ public class Board {
     }
 
     private void loadFenEnPassantSquare(String segment) {
-        enPassantSquare = segment.equals("-") ? -1 : Notation.toIndex(segment);
+        enPassantSquare = segment.equals("-") ? new Square(-1) : new Square(Notation.toIndex(segment));
     }
 
     private void loadFenMoveData(String halfMoveSegment, String fullMoveSegment) {
@@ -322,7 +362,7 @@ public class Board {
         fen += castlingRights.toFenString();
 
         // En passant square data
-        fen += " " + (enPassantSquare != -1 ? Notation.toNotation(enPassantSquare) : "-");
+        fen += " " + (enPassantSquare.getIndex() != -1 ? Notation.toNotation(enPassantSquare) : "-");
 
         // Halfmove data
         fen += " " + fiftyMoveCounter;
@@ -398,6 +438,10 @@ public class Board {
         blackPieces &= ~position;
 
         board[pos] = Piece.NONE;
+    }
+
+    private void removePiece(Square square) {
+        removePiece(square.getIndex());
     }
 
     private void movePiece(int fromIndex, int toIndex) {
