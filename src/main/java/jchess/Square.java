@@ -3,16 +3,16 @@ package jchess;
 import java.awt.Point;
 import java.util.Objects;
 
-public class Square {
+public final class Square {
 
-    private final int index;
+    private int index;
 
     public Square(int index) {
-        this.index = index;
+        this.set(index);
     }
 
     public Square(int file, int rank) {
-        this.index = Square.toIndex(file, rank);
+        this.set(file, rank);
     }
 
     public int getFile() {
@@ -49,6 +49,26 @@ public class Square {
 
     public static int toIndex(int file, int rank) {
         return rank * 8 + file;
+    }
+
+    public Square plus(int df, int dr) {
+        return new Square(getFile() + df, getRank() + dr);
+    }
+
+    public Square minus(int df, int dr) {
+        return this.plus(-df, -dr);
+    }
+
+    public void set(int file, int rank) {
+        this.index = Square.toIndex(file, rank);
+    }
+
+    public void set(int index) {
+        this.index = index;
+    }
+
+    public void set(Square square) {
+        this.index = square.getIndex();
     }
 
     @Override
