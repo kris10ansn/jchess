@@ -5,7 +5,7 @@ public class Board {
     private final CastlingRights castlingRights = new CastlingRights();
     private final int[] board = new int[64];
 
-    private int activeColor = Piece.WHITE;
+    public int activeColor = Piece.WHITE;
     private int moveCounter = 1;
     private int fiftyMoveCounter = 0;
     private int enPassantSquare = -1;
@@ -26,9 +26,15 @@ public class Board {
         updateCastlingRights(move);
 
         movePiece(move.fromSquare(), move.toSquare());
+
+        activeColor = Piece.isWhite(activeColor) ? Piece.BLACK : Piece.WHITE;
     }
 
     public boolean isLegalMove(Move move) {
+        if (Piece.isType(activeColor, getPiece(move.fromSquare()))) {
+            return false;
+        }
+
         return Bits.overlap(
                 generateMovesFor(move.fromSquare()),
                 move.toSquare().getPositionBitBoard()

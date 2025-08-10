@@ -133,7 +133,7 @@ public class ChessBoardPanel extends JPanel {
 
         if (inMoves(square.getIndex())) {
             moveSelectedPiece(square.getIndex());
-        } else if (piece == Piece.NONE) {
+        } else if (!Piece.isColor(piece, board.activeColor)) {
             clearSelection();
         } else {
             selectSquare(square.getIndex());
