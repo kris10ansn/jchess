@@ -7,7 +7,7 @@ public class Board {
 
     public int activeColor = Piece.WHITE;
     private int moveCounter = 1;
-    private int fiftyMoveCounter = 0;
+    private int halfMoveCounter = 0;
     private Square enPassantSquare = new Square(-1);
 
     private long whitePieces = 0L;
@@ -318,7 +318,7 @@ public class Board {
     }
 
     private void loadFenMoveData(String halfMoveSegment, String fullMoveSegment) {
-        fiftyMoveCounter = Integer.parseInt(halfMoveSegment);
+        halfMoveCounter = Integer.parseInt(halfMoveSegment);
         moveCounter = Integer.parseInt(fullMoveSegment);
     }
 
@@ -366,7 +366,7 @@ public class Board {
         fen += " " + (enPassantSquare.getIndex() != -1 ? Notation.toNotation(enPassantSquare) : "-");
 
         // Halfmove data
-        fen += " " + fiftyMoveCounter;
+        fen += " " + halfMoveCounter;
 
         // Fullmove data
         fen += " " + moveCounter;
@@ -381,7 +381,7 @@ public class Board {
     public void debugPrint() {
         System.out.println((activeColor == Piece.WHITE ? "White" : "Black") + " to move");
         System.out.println("Move counter: " + moveCounter);
-        System.out.println("Halfmove counter: " + fiftyMoveCounter);
+        System.out.println("Halfmove counter: " + halfMoveCounter);
         System.out.println("En passant square: " + enPassantSquare);
 
         System.out.println("White can"
