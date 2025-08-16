@@ -6,6 +6,8 @@ public class Board {
     private final int[] board = new int[64];
 
     public int activeColor = Piece.WHITE;
+    public Move lastMove = null;
+
     private int moveCounter = 1;
     private int halfMoveCounter = 0;
     private Square enPassantSquare = new Square(-1);
@@ -28,6 +30,7 @@ public class Board {
         movePiece(move.fromSquare(), move.toSquare());
 
         activeColor = Piece.isWhite(activeColor) ? Piece.BLACK : Piece.WHITE;
+        lastMove = move;
     }
 
     public boolean isLegalMove(Move move) {

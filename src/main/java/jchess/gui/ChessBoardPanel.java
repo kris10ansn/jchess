@@ -33,6 +33,7 @@ public class ChessBoardPanel extends JPanel {
     private final Color COLOR_DARK = new Color(0xFFAC825E);
     private final Color COLOR_LIGHT = new Color(0xFFDCC7A6);
     private final Color COLOR_HIGHLIGHT = new Color(20, 85, 30, 128);
+    private final Color COLOR_MOVE_HIGHLIGHT = new Color(155, 199, 0, 105);
     private final Color COLOR_EXTRA_DARK = new Color(0x946F51);
 
     private final int BOARD_SIZE = 1024;
@@ -99,9 +100,15 @@ public class ChessBoardPanel extends JPanel {
             drawSquare(g, square);
 
             if (isHighlighted(i)) {
-                drawHighlight(g, square);
+                drawHighlight(g, square, COLOR_HIGHLIGHT);
             } else if (inMoves(i)) {
                 drawMoveHighlight(g, square);
+            }
+
+            if (board.lastMove != null
+                    && (square.equals(board.lastMove.fromSquare())
+                    || square.equals(board.lastMove.toSquare()))) {
+                drawHighlight(g, square, COLOR_MOVE_HIGHLIGHT);
             }
 
             if (square.getRank() == 0) {
@@ -220,8 +227,8 @@ public class ChessBoardPanel extends JPanel {
         g.fillRect(square.getX(SQUARE_SIZE), square.getY(SQUARE_SIZE), SQUARE_SIZE, SQUARE_SIZE);
     }
 
-    private void drawHighlight(Graphics g, Square square) {
-        g.setColor(COLOR_HIGHLIGHT);
+    private void drawHighlight(Graphics g, Square square, Color color) {
+        g.setColor(color);
         g.fillRect(square.getX(SQUARE_SIZE), square.getY(SQUARE_SIZE), SQUARE_SIZE, SQUARE_SIZE);
     }
 
