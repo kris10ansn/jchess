@@ -429,10 +429,6 @@ public final class Board {
 
     }
 
-    public int[] getBoard() {
-        return board;
-    }
-
     private void setPiece(int piece, int pos) {
         final long position = Bits.oneAt(pos);
 

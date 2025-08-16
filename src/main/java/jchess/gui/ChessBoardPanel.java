@@ -92,8 +92,6 @@ public class ChessBoardPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        final int[] boardArray = board.getBoard();
-
         for (int i = 0; i < 64; i++) {
             final Square square = new Square(i);
 
@@ -122,7 +120,7 @@ public class ChessBoardPanel extends JPanel {
             }
 
             // Draw piece
-            final int piece = boardArray[i];
+            final int piece = board.getPiece(i);
 
             if (piece != Piece.NONE) {
                 drawPiece(g, piece, square);
