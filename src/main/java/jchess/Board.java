@@ -1,6 +1,6 @@
 package jchess;
 
-public class Board {
+public final class Board {
 
     private final CastlingRights castlingRights = new CastlingRights();
     private final int[] board = new int[64];
@@ -14,6 +14,13 @@ public class Board {
 
     private long whitePieces = 0L;
     private long blackPieces = 0L;
+
+    public Board() {
+    }
+
+    public Board(String fen) {
+        loadFen(fen);
+    }
 
     public void makeMove(Move move) {
         if (!isLegalMove(move)) {
@@ -124,6 +131,10 @@ public class Board {
 
     public long generateMovesFor(Square square) {
         final int piece = getPiece(square);
+
+        if (!Piece.isColor(piece, activeColor)) {
+            return 0L;
+        }
 
         final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
 
