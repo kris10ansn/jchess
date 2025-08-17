@@ -13,13 +13,8 @@ public class JChess {
     private static Board board;
 
     public static void main(String args[]) {
-        String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
-        board = new Board();
-        board.loadFen(fen);
+        board = new Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         board.debugPrint();
-
-        System.out.println("Provided FEN: " + fen);
 
         SwingUtilities.invokeLater(() -> createWindow());
     }
