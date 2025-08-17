@@ -255,8 +255,16 @@ public final class Board {
                 & Bits.shift(singlePush, up)
                 & ~getAllPieces();
 
-        long attacks = (Bits.oneAt(fromSquare.getIndex() + direction * 9)
-                | Bits.oneAt(fromSquare.getIndex() + direction * 7)) & opponentPieces;
+        long attacks = 0L;
+
+        if (fromSquare.getFile() != 0) {
+            attacks |= Bits.oneAt(fromSquare.plus(-1, direction).getIndex());
+        }
+        if (fromSquare.getFile() != 7) {
+            attacks |= Bits.oneAt(fromSquare.plus(1, direction).getIndex());
+        }
+
+        attacks &= opponentPieces;
 
         return singlePush | doublePush | attacks;
     }
