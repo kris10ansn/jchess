@@ -287,7 +287,9 @@ public final class Board {
         String[] segments = fen.split(" ");
 
         if (segments.length != 6) {
-            throw new IllegalArgumentException("Invalid fen string: " + fen);
+            throw new IllegalArgumentException(
+                    "Invalid fen string segments (" + segments.length + ") [" + fen + "]"
+            );
         }
 
         loadFenPiecePlacement(segments[0]);
