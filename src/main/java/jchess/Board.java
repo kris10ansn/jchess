@@ -47,6 +47,50 @@ public final class Board {
         lastMove = move;
     }
 
+    public boolean isKingInCheck(int pieceColor) {
+        final long ownPieces = Piece.isWhite(pieceColor) ? whitePieces : blackPieces;
+        final long enemyPieces = Piece.isWhite(pieceColor) ? blackPieces : whitePieces;
+        final long ownKings = ownPieces & kings;
+
+        final int kingPiece = Piece.KING | pieceColor;
+        Square kingSquare = null;
+
+        for (int i = 0; i < 64; i++) {
+            if (Bits.getBit(ownKings, i)) {
+                kingSquare = new Square(i);
+                break;
+            }
+        }
+
+        if (kingSquare == null) {
+            throw new IllegalStateException(
+                    "No king found with color "
+                    + (Piece.isWhite(pieceColor) ? "white" : "black")
+            );
+        }
+
+        long checkers = (onlyCaptures(generateQueenMoves(kingSquare), kingSquare, kingPiece) & queens & enemyPieces)
+                | (onlyCaptures(generateBishopMoves(kingSquare), kingSquare, kingPiece) & bishops & enemyPieces)
+                | (onlyCaptures(generateRookMoves(kingSquare), kingSquare, kingPiece) & rooks & enemyPieces)
+                | (onlyCaptures(generateKnightMoves(kingSquare), kingSquare, kingPiece) & knights & enemyPieces)
+                | (onlyCaptures(generatePawnMoves(kingSquare), kingSquare, kingPiece) & pawns & enemyPieces);
+
+        return checkers != 0;
+    }
+
+    public long onlyCaptures(long moveBitmap, Square fromSquare, int piece) {
+        final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
+        final long enemyPieces = Piece.isWhite(piece) ? blackPieces : whitePieces;
+
+        long captures = (moveBitmap & ~ownPieces) & enemyPieces;
+
+        if (Piece.isType(piece, Piece.PAWN)) {
+            captures |= generateEnPassantMoves(fromSquare, getPawnDirection(piece));
+        }
+
+        return captures;
+    }
+
     public boolean isLegalMove(Move move) {
         if (Piece.isType(activeColor, getPiece(move.fromSquare()))) {
             return false;
