@@ -15,6 +15,13 @@ public final class Board {
     private long whitePieces = 0L;
     private long blackPieces = 0L;
 
+    private long kings = 0L;
+    private long pawns = 0L;
+    private long knights = 0L;
+    private long bishops = 0L;
+    private long rooks = 0L;
+    private long queens = 0L;
+
     public Board() {
     }
 
@@ -442,13 +449,48 @@ public final class Board {
             whitePieces &= ~position;
         }
 
+        switch (Piece.getType(piece)) {
+            case Piece.KING ->
+                kings |= position;
+            case Piece.PAWN ->
+                pawns |= position;
+            case Piece.KNIGHT ->
+                knights |= position;
+            case Piece.BISHOP ->
+                bishops |= position;
+            case Piece.ROOK ->
+                rooks |= position;
+            case Piece.QUEEN ->
+                queens |= position;
+            default ->
+                throw new Error("Unknown piece type: " + Piece.getType(piece));
+        }
+
         board[pos] = piece;
     }
 
     private void removePiece(int pos) {
+        final int piece = getPiece(pos);
         final long position = Bits.oneAt(pos);
         whitePieces &= ~position;
         blackPieces &= ~position;
+
+        switch (Piece.getType(piece)) {
+            case Piece.KING ->
+                kings &= ~position;
+            case Piece.PAWN ->
+                pawns &= ~position;
+            case Piece.KNIGHT ->
+                knights &= ~position;
+            case Piece.BISHOP ->
+                bishops &= ~position;
+            case Piece.ROOK ->
+                rooks &= ~position;
+            case Piece.QUEEN ->
+                queens &= ~position;
+            default ->
+                throw new Error("Unknown piece type: " + Piece.getType(piece));
+        }
 
         board[pos] = Piece.NONE;
     }
