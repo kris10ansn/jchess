@@ -25,6 +25,7 @@ import jchess.Move;
 import jchess.Notation;
 import jchess.Piece;
 import jchess.Square;
+import jchess.util.Pair;
 
 public class ChessBoardPanel extends JPanel {
 
@@ -48,6 +49,8 @@ public class ChessBoardPanel extends JPanel {
     private final Point dragPosition = new Point(0, 0);
 
     private final Board board;
+
+    private final Pair<Integer, Boolean> inCheckCache = new Pair<>(0, false);
 
     private final MouseAdapter mouseAdapter = new MouseAdapter() {
         @Override
@@ -94,6 +97,7 @@ public class ChessBoardPanel extends JPanel {
 
         for (int i = 0; i < 64; i++) {
             final Square square = new Square(i);
+            final int piece = board.getPiece(i);
 
             drawSquare(g, square);
 
@@ -101,6 +105,12 @@ public class ChessBoardPanel extends JPanel {
                 drawHighlight(g, square, COLOR_HIGHLIGHT);
             } else if (inMoves(i)) {
                 drawMoveHighlight(g, square);
+            }
+
+            boolean isActiveKing = Piece.isType(piece, Piece.KING) && Piece.isColor(piece, board.activeColor);
+
+            if (isActiveKing && inCheckCached(piece)) {
+                drawCheckHighlight(g, square);
             }
 
             if (board.lastMove != null
@@ -120,8 +130,6 @@ public class ChessBoardPanel extends JPanel {
             }
 
             // Draw piece
-            final int piece = board.getPiece(i);
-
             if (piece != Piece.NONE) {
                 drawPiece(g, piece, square);
             }
@@ -130,6 +138,17 @@ public class ChessBoardPanel extends JPanel {
         if (dragPiece != Piece.NONE) {
             drawPiece(g, dragPiece, dragPosition);
         }
+    }
+
+    private boolean inCheckCached(int pieceColor) {
+        boolean inCheck = Piece.isColor(inCheckCache.getFirst(), board.activeColor)
+                ? inCheckCache.getSecond()
+                : board.isKingInCheck(pieceColor);
+
+        inCheckCache.setFirst(board.activeColor);
+        inCheckCache.setSecond(inCheck);
+
+        return inCheck;
     }
 
     private void handleMousePressed(MouseEvent event) {
@@ -218,6 +237,14 @@ public class ChessBoardPanel extends JPanel {
             g.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
             g.setClip(null);
         }
+    }
+
+    private void drawCheckHighlight(Graphics g, Square square) {
+        final int x = square.getX(SQUARE_SIZE);
+        final int y = square.getY(SQUARE_SIZE);
+
+        g.setColor(Color.RED);
+        g.fillOval(x, y, SQUARE_SIZE, SQUARE_SIZE);
     }
 
     private void drawSquare(Graphics g, Square square) {
