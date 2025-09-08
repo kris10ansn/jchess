@@ -15,6 +15,13 @@ public final class Board {
     private long whitePieces = 0L;
     private long blackPieces = 0L;
 
+    private long kings = 0L;
+    private long pawns = 0L;
+    private long knights = 0L;
+    private long bishops = 0L;
+    private long rooks = 0L;
+    private long queens = 0L;
+
     public Board() {
     }
 
@@ -38,6 +45,50 @@ public final class Board {
 
         activeColor = Piece.isWhite(activeColor) ? Piece.BLACK : Piece.WHITE;
         lastMove = move;
+    }
+
+    public boolean isKingInCheck(int pieceColor) {
+        final long ownPieces = Piece.isWhite(pieceColor) ? whitePieces : blackPieces;
+        final long enemyPieces = Piece.isWhite(pieceColor) ? blackPieces : whitePieces;
+        final long ownKings = ownPieces & kings;
+
+        final int kingPiece = Piece.KING | pieceColor;
+        Square kingSquare = null;
+
+        for (int i = 0; i < 64; i++) {
+            if (Bits.getBit(ownKings, i)) {
+                kingSquare = new Square(i);
+                break;
+            }
+        }
+
+        if (kingSquare == null) {
+            throw new IllegalStateException(
+                    "No king found with color "
+                    + (Piece.isWhite(pieceColor) ? "white" : "black")
+            );
+        }
+
+        long checkers = (onlyCaptures(generateQueenMoves(kingSquare), kingSquare, kingPiece) & queens & enemyPieces)
+                | (onlyCaptures(generateBishopMoves(kingSquare), kingSquare, kingPiece) & bishops & enemyPieces)
+                | (onlyCaptures(generateRookMoves(kingSquare), kingSquare, kingPiece) & rooks & enemyPieces)
+                | (onlyCaptures(generateKnightMoves(kingSquare), kingSquare, kingPiece) & knights & enemyPieces)
+                | (onlyCaptures(generatePawnMoves(kingSquare), kingSquare, kingPiece) & pawns & enemyPieces);
+
+        return checkers != 0;
+    }
+
+    public long onlyCaptures(long moveBitmap, Square fromSquare, int piece) {
+        final long ownPieces = Piece.isWhite(piece) ? whitePieces : blackPieces;
+        final long enemyPieces = Piece.isWhite(piece) ? blackPieces : whitePieces;
+
+        long captures = (moveBitmap & ~ownPieces) & enemyPieces;
+
+        if (Piece.isType(piece, Piece.PAWN)) {
+            captures |= generateEnPassantMoves(fromSquare, getPawnDirection(piece));
+        }
+
+        return captures;
     }
 
     public boolean isLegalMove(Move move) {
@@ -143,7 +194,7 @@ public final class Board {
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return MoveHelper.getShiftedKnightMovesMask(square.getIndex()) & ~ownPieces;
+            return generateKnightMoves(square) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
@@ -155,8 +206,7 @@ public final class Board {
         }
 
         if (Piece.isType(piece, Piece.QUEEN)) {
-            return (generateRookMoves(square) | generateBishopMoves(square))
-                    & ~ownPieces;
+            return generateQueenMoves(square) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.KING)) {
@@ -180,6 +230,10 @@ public final class Board {
         }
 
         return 0L;
+    }
+
+    private long generateKnightMoves(Square square) {
+        return MoveHelper.getShiftedKnightMovesMask(square.getIndex());
     }
 
     /**
@@ -233,16 +287,31 @@ public final class Board {
 
     }
 
+    private long generateQueenMoves(Square fromSquare) {
+        return generateRookMoves(fromSquare) | generateBishopMoves(fromSquare);
+    }
+
+    private int getPawnDirection(int piece) {
+        return Piece.isWhite(piece) ? 1 : -1;
+    }
+
+    private long generatePawnAttackSquares(Square fromSquare, int direction) {
+        return (Bits.oneAt(fromSquare.getIndex() + direction * 9)
+                | Bits.oneAt(fromSquare.getIndex() + direction * 7));
+    }
+
+    private long generateEnPassantMoves(Square fromSquare, int direction) {
+        return generatePawnAttackSquares(fromSquare, direction)
+                & (enPassantSquare.getIndex() != -1
+                ? enPassantSquare.getPositionBitBoard() : 0L);
+    }
+
     private long generatePawnMoves(Square fromSquare) {
         final int piece = getPiece(fromSquare.getIndex());
         final boolean isWhite = Piece.isWhite(piece);
         long opponentPieces = isWhite ? blackPieces : whitePieces;
 
-        if (enPassantSquare.getIndex() != -1) {
-            opponentPieces |= enPassantSquare.getPositionBitBoard();
-        }
-
-        final int direction = isWhite ? 1 : -1;
+        final int direction = getPawnDirection(piece);
         final int up = direction * 8;
 
         long startingSquares = isWhite
@@ -255,16 +324,8 @@ public final class Board {
                 & Bits.shift(singlePush, up)
                 & ~getAllPieces();
 
-        long attacks = 0L;
-
-        if (fromSquare.getFile() != 0) {
-            attacks |= Bits.oneAt(fromSquare.plus(-1, direction).getIndex());
-        }
-        if (fromSquare.getFile() != 7) {
-            attacks |= Bits.oneAt(fromSquare.plus(1, direction).getIndex());
-        }
-
-        attacks &= opponentPieces;
+        long attacks = (generatePawnAttackSquares(fromSquare, direction) & opponentPieces)
+                | generateEnPassantMoves(fromSquare, direction);
 
         return singlePush | doublePush | attacks;
     }
@@ -450,13 +511,48 @@ public final class Board {
             whitePieces &= ~position;
         }
 
+        switch (Piece.getType(piece)) {
+            case Piece.KING ->
+                kings |= position;
+            case Piece.PAWN ->
+                pawns |= position;
+            case Piece.KNIGHT ->
+                knights |= position;
+            case Piece.BISHOP ->
+                bishops |= position;
+            case Piece.ROOK ->
+                rooks |= position;
+            case Piece.QUEEN ->
+                queens |= position;
+            default ->
+                throw new Error("Unknown piece type: " + Piece.getType(piece));
+        }
+
         board[pos] = piece;
     }
 
     private void removePiece(int pos) {
+        final int piece = getPiece(pos);
         final long position = Bits.oneAt(pos);
         whitePieces &= ~position;
         blackPieces &= ~position;
+
+        switch (Piece.getType(piece)) {
+            case Piece.KING ->
+                kings &= ~position;
+            case Piece.PAWN ->
+                pawns &= ~position;
+            case Piece.KNIGHT ->
+                knights &= ~position;
+            case Piece.BISHOP ->
+                bishops &= ~position;
+            case Piece.ROOK ->
+                rooks &= ~position;
+            case Piece.QUEEN ->
+                queens &= ~position;
+            default ->
+                throw new Error("Unknown piece type: " + Piece.getType(piece));
+        }
 
         board[pos] = Piece.NONE;
     }
