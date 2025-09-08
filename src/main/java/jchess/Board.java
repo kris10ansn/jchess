@@ -150,7 +150,7 @@ public final class Board {
         }
 
         if (Piece.isType(piece, Piece.KNIGHT)) {
-            return MoveHelper.getShiftedKnightMovesMask(square.getIndex()) & ~ownPieces;
+            return generateKnightMoves(square) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.ROOK)) {
@@ -162,8 +162,7 @@ public final class Board {
         }
 
         if (Piece.isType(piece, Piece.QUEEN)) {
-            return (generateRookMoves(square) | generateBishopMoves(square))
-                    & ~ownPieces;
+            return generateQueenMoves(square) & ~ownPieces;
         }
 
         if (Piece.isType(piece, Piece.KING)) {
@@ -187,6 +186,10 @@ public final class Board {
         }
 
         return 0L;
+    }
+
+    private long generateKnightMoves(Square square) {
+        return MoveHelper.getShiftedKnightMovesMask(square.getIndex());
     }
 
     /**
@@ -240,16 +243,31 @@ public final class Board {
 
     }
 
+    private long generateQueenMoves(Square fromSquare) {
+        return generateRookMoves(fromSquare) | generateBishopMoves(fromSquare);
+    }
+
+    private int getPawnDirection(int piece) {
+        return Piece.isWhite(piece) ? 1 : -1;
+    }
+
+    private long generatePawnAttackSquares(Square fromSquare, int direction) {
+        return (Bits.oneAt(fromSquare.getIndex() + direction * 9)
+                | Bits.oneAt(fromSquare.getIndex() + direction * 7));
+    }
+
+    private long generateEnPassantMoves(Square fromSquare, int direction) {
+        return generatePawnAttackSquares(fromSquare, direction)
+                & (enPassantSquare.getIndex() != -1
+                ? enPassantSquare.getPositionBitBoard() : 0L);
+    }
+
     private long generatePawnMoves(Square fromSquare) {
         final int piece = getPiece(fromSquare.getIndex());
         final boolean isWhite = Piece.isWhite(piece);
         long opponentPieces = isWhite ? blackPieces : whitePieces;
 
-        if (enPassantSquare.getIndex() != -1) {
-            opponentPieces |= enPassantSquare.getPositionBitBoard();
-        }
-
-        final int direction = isWhite ? 1 : -1;
+        final int direction = getPawnDirection(piece);
         final int up = direction * 8;
 
         long startingSquares = isWhite
@@ -262,8 +280,8 @@ public final class Board {
                 & Bits.shift(singlePush, up)
                 & ~getAllPieces();
 
-        long attacks = (Bits.oneAt(fromSquare.getIndex() + direction * 9)
-                | Bits.oneAt(fromSquare.getIndex() + direction * 7)) & opponentPieces;
+        long attacks = (generatePawnAttackSquares(fromSquare, direction) & opponentPieces)
+                | generateEnPassantMoves(fromSquare, direction);
 
         return singlePush | doublePush | attacks;
     }
