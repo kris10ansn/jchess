@@ -25,7 +25,7 @@ public class Piece {
     }
 
     public static boolean isColor(int piece, int color) {
-        return getColor(piece) == color;
+        return getColor(piece) == getColor(color);
     }
 
     public static boolean isWhite(int piece) {
@@ -38,6 +38,10 @@ public class Piece {
 
     public static int getColor(int piece) {
         return piece & COLOR_MASK;
+    }
+
+    public static int getType(int piece) {
+        return piece & TYPE_MASK;
     }
 
     public static int fromFenChar(char fenChar) {
