@@ -296,8 +296,16 @@ public final class Board {
     }
 
     private long generatePawnAttackSquares(Square fromSquare, int direction) {
-        return (Bits.oneAt(fromSquare.getIndex() + direction * 9)
-                | Bits.oneAt(fromSquare.getIndex() + direction * 7));
+        long attacks = 0L;
+
+        if (fromSquare.getFile() != 0) {
+            attacks |= Bits.oneAt(fromSquare.plus(-1, direction).getIndex());
+        }
+        if (fromSquare.getFile() != 7) {
+            attacks |= Bits.oneAt(fromSquare.plus(1, direction).getIndex());
+        }
+
+        return attacks;
     }
 
     private long generateEnPassantMoves(Square fromSquare, int direction) {
